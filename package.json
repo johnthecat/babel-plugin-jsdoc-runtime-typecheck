@@ -7,10 +7,12 @@
     "build": "babel src --out-dir dist",
     "watch": "babel src --watch --out-dir dist"
   },
+  "pre-commit": ["build"],
   "author": "Sergey Zhuravlev <zhuravlev1337@gmail.com> (https://github.com/johnthecat/babel-plugin-jsdoc-runtime-typecheck.git)",
   "license": "MIT",
   "devDependencies": {
-    "babel-preset-es2015": "^6.18.0"
+    "babel-preset-es2015": "^6.18.0",
+    "pre-commit": "^1.1.3"
   },
   "dependencies": {
     "doctrine": "2.0.0",
