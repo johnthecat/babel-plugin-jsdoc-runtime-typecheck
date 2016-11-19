@@ -1,10 +1,11 @@
 {
   "name": "babel-plugin-jsdoc-runtime-typecheck",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Babel plugin, that adds typecheck, based on jsDoc.",
   "main": "dist/index.js",
   "scripts": {
-    "build": "babel src --out-dir dist"
+    "build": "babel src --out-dir dist",
+    "watch": "babel src --watch --out-dir dist"
   },
   "author": "Sergey Zhuravlev <zhuravlev1337@gmail.com> (https://github.com/johnthecat/babel-plugin-jsdoc-runtime-typecheck.git)",
   "license": "MIT",

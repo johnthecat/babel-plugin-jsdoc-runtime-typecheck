@@ -128,6 +128,23 @@ module.exports = function ({types: t}) {
                 executeFunctionTransformation(comment, argument);
             },
 
+            AssignmentExpression(path, state) {
+                let rightPath = path.get('right');
+
+                if (!rightPath.isFunction()) {
+                    return;
+                }
+
+                let expression = path.find((parent) => parent.isExpressionStatement());
+                let comment = findComment(expression, state);
+
+                if (!comment) {
+                    return;
+                }
+
+                executeFunctionTransformation(comment, rightPath);
+            },
+
             [VISITORS.join('|')](path, state) {
                 let comment = findComment(path, state);
 
