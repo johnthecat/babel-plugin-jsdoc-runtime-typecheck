@@ -145,6 +145,22 @@ module.exports = function ({types: t}) {
                 executeFunctionTransformation(comment, rightPath);
             },
 
+            ObjectProperty(path, state) {
+                let value = path.get('value');
+
+                if (!value.isFunction()) {
+                    return;
+                }
+
+                let comment = findComment(path, state);
+
+                if (!comment) {
+                    return;
+                }
+
+                executeFunctionTransformation(comment, value);
+            },
+
             [VISITORS.join('|')](path, state) {
                 let comment = findComment(path, state);
 
