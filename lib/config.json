@@ -1,0 +1,12 @@
+{
+    "default": {
+        "useDirective": "typecheck"
+    },
+    "doctrineConfig": {
+        "unwrap": true,
+        "sloppy": true,
+        "recoverable": true
+    },
+    "functionName": "__executeTypeCheck__",
+    "defaultFunctionName": "Anonymous function"
+}

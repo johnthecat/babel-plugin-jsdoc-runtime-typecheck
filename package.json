@@ -1,0 +1,16 @@
+{
+  "name": "babel-plugin-jsdoc-runtime-typecheck",
+  "version": "1.0.0",
+  "description": "Babel plugin, that adds typecheck, based on jsDoc.",
+  "main": "index.js",
+  "scripts": {
+  },
+  "author": "Sergey Zhuravlev <zhuravlev1337@gmail.com> (https://github.com/johnthecat/babel-plugin-jsdoc-runtime-type-check.git)",
+  "license": "MIT",
+  "devDependencies": {
+  },
+  "dependencies": {
+    "doctrine": "2.0.0",
+    "babel-template": "6.16.0"
+  }
+}
