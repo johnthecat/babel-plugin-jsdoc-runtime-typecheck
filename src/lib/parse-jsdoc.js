@@ -1,4 +1,4 @@
-const config = require('./config.json');
+const config = require('../../config.json');
 const doctrine = require('doctrine');
 
 const WRONG_TYPES = {

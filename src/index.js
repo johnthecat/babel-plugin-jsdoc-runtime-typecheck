@@ -14,7 +14,7 @@
  * 9. If some function were transformed by plugin, on exit of Program it adds type check function declaration to file.
  */
 
-const config = require('./lib/config.json');
+const config = require('../config.json');
 const findComment = require('./lib/find-comment');
 const parseJsDoc = require('./lib/parse-jsdoc');
 const normalizeFunctionBody = require('./lib/normalize-function-body');

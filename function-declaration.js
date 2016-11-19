@@ -1,4 +1,4 @@
-const babelTemplate = require('babel-template');
+var babelTemplate = require('babel-template');
 
 /**
  * CAUTION! This function must be written in ES5 syntax, because it's included in final client code.
@@ -176,4 +176,6 @@ function __TYPECHECKFUNCTION__(functionName, parameterName, parameter, validator
 /**
  * @param {String} name
  */
-module.exports = (name) => babelTemplate(__TYPECHECKFUNCTION__.toString().replace('__TYPECHECKFUNCTION__', name));
+module.exports = function(name) {
+    return babelTemplate(__TYPECHECKFUNCTION__.toString().replace('__TYPECHECKFUNCTION__', name));
+};

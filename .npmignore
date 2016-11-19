@@ -1,0 +1,7 @@
+.idea
+node_modules
+test
+lib
+index.js
+TODO.md
+npm-debug.log
