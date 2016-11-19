@@ -2,7 +2,7 @@
   "name": "babel-plugin-jsdoc-runtime-typecheck",
   "version": "1.0.0",
   "description": "Babel plugin, that adds typecheck, based on jsDoc.",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "build": "babel src --out-dir dist"
   },
