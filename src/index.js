@@ -69,6 +69,10 @@ module.exports = function ({types: t}) {
 
             let argument = path.get('argument');
 
+            if (!argument.node) {
+                return;
+            }
+
             argument.replaceWith(
                 typecheckFunctionCall(
                     this.functionName,
