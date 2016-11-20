@@ -17,7 +17,12 @@ module.exports = function insertTypecheck(functionName, functionTemplate, functi
 
     for (let index = functionParameters.length - 1; index >= 0; index--) {
         node = functionParameters[index]['node'];
-        name = node['name'];
+        name = node.name;
+
+        if (node.argument) {
+            node = node.argument;
+            name = node.name;
+        }
 
         if (!parameters[name]) {
             continue;
