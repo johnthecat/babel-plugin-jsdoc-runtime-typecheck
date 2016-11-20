@@ -34,7 +34,17 @@ module.exports = function findRelativeComment(path, state) {
     let previousNode = path.key !== 0 ? path.getSibling(path.key - 1) : null;
     let previousNodeEnd = previousNode && previousNode.node ? previousNode.node.end || -1 : -1;
 
-    let functionDeclarationStart = path.node.start;
+    let functionDeclarationStart;
+
+    /**
+     * Fix for annoying edge case, when ObjectProperty node doesn't have start index
+     * Workaround: find function body and get it's start index.
+     */
+    if (path.isObjectProperty()) {
+        functionDeclarationStart = path.node.start || path.get('value').get('body').node.start;
+    } else {
+        functionDeclarationStart = path.node.start;
+    }
 
     let foundedCommentsCollection = comments.filter((comment) => {
         return (
