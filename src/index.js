@@ -36,7 +36,7 @@ module.exports = function ({types: t}) {
 
     /**
      * @param {String} comment
-     * @param {Object} path
+     * @param {NodePath} path
      */
     function executeFunctionTransformation(comment, path) {
         let jsDoc = parseJsDoc(comment);

@@ -3,55 +3,70 @@ const DEFAULT_TYPES = ['Object', 'Number', 'String', 'Boolean', 'Array'];
 /**
  * @param {String} functionName
  * @param {Function} functionTemplate
- * @param {Object} functionPath
+ * @param {NodePath} functionPath
  * @param {Object} jsDoc
  * @param t
  */
-module.exports = function insertTypecheck(functionName, functionTemplate, functionPath, jsDoc, t) {
+module.exports = function insertParametersAssertion(functionName, functionTemplate, functionPath, jsDoc, t) {
     let parameters = jsDoc.parameters;
     let functionParameters = functionPath.get('params');
     let functionBody = functionPath.get('body');
+    let functionScope = functionPath.scope;
 
-    let node, name;
-    let type, validator;
+    if (!functionBody.isBlockStatement()) {
+        return;
+    }
 
-    for (let index = functionParameters.length - 1; index >= 0; index--) {
-        node = functionParameters[index]['node'];
-        name = node.name;
+    iterateThroughArrayOfNodes(functionParameters);
 
-        if (node.argument) {
-            node = node.argument;
+    /**
+     * @param {Array<NodePath>} nodes
+     */
+    function iterateThroughArrayOfNodes(nodes) {
+        let path, node, name;
+        let type, validator;
+
+        for (let index = nodes.length - 1; index >= 0; index--) {
+            path = nodes[index];
+            node = path.node;
+
+            if (path.isAssignmentPattern()) {
+                node = node.left;
+            } else if (path.isRestElement()) {
+                node = node.argument;
+            } else if (path.isObjectProperty()) {
+                node = node.key;
+            } else if (path.isObjectPattern()) {
+                iterateThroughArrayOfNodes(
+                    path.get('properties')
+                );
+            }
+
             name = node.name;
-        }
+            type = parameters[name];
 
-        if (!parameters[name]) {
-            continue;
-        }
+            if (!type) {
+                continue;
+            }
 
-        if (!functionBody.isBlockStatement()) {
-            continue;
-        }
+            if (
+                typeof type === 'string' && !DEFAULT_TYPES.includes(type) &&
+                functionScope.hasBinding(type)
+            ) {
+                validator = t.identifier(type);
+            } else {
+                validator = t.stringLiteral(JSON.stringify(type));
+            }
 
-        type = parameters[name];
-
-        if (
-            typeof type === 'string' && !DEFAULT_TYPES.includes(type) &&
-            functionPath.scope.hasBinding(type)
-        ) {
-            validator = t.identifier(type);
-        } else {
-            validator = t.stringLiteral(JSON.stringify(type));
-        }
-
-        functionBody.unshiftContainer(
-            'body',
-            functionTemplate(
-                functionName,
-                node.name,
-                node,
-                validator
+            functionBody.unshiftContainer(
+                'body',
+                functionTemplate(
+                    functionName,
+                    name,
+                    node,
+                    validator
+                )
             )
-        );
-
+        }
     }
 };

@@ -19,7 +19,7 @@ function getDirective(state) {
 
 
 /**
- * @param {Object} path
+ * @param {NodePath} path
  * @param {Object} state
  * @returns {String}
  */
