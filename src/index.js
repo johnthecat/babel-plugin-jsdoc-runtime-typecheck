@@ -15,6 +15,7 @@
  */
 
 const config = require('../config.json');
+const checkFunction = require('./lib/check-function');
 const findComment = require('./lib/find-comment');
 const parseJsDoc = require('./lib/parse-jsdoc');
 const normalizeFunctionBody = require('./lib/normalize-function-body');
@@ -28,6 +29,10 @@ const VISITORS = [
     'ArrowFunctionExpression'
 ];
 
+/**
+ * @param {Object} t
+ * @returns {{visitor: Object}}
+ */
 module.exports = function ({types: t}) {
     const typecheckFunctionDeclaration = typecheckTemplate.function(config.functionName);
     const typecheckFunctionCall = typecheckTemplate.call(config.functionName, t);
@@ -37,17 +42,23 @@ module.exports = function ({types: t}) {
     /**
      * @param {String} comment
      * @param {NodePath} path
+     * @param {String} [name]
      */
-    function executeFunctionTransformation(comment, path) {
+    function executeFunctionTransformation(comment, path, name) {
         let jsDoc = parseJsDoc(comment);
 
         if (!jsDoc) {
             return;
         }
 
-        let functionName = jsDoc.name || (path.node.id ? path.node.id.name : config.defaultFunctionName);
+        let functionName = name || jsDoc.name || (path.node.id ? path.node.id.name : config.defaultFunctionName);
 
         normalizeFunctionBody(path);
+
+        if (!checkFunction(path)) {
+            return;
+        }
+
         insertParametersCheck(functionName, typecheckFunctionCall, path, jsDoc, t);
 
         if (jsDoc.returnStatement) {
@@ -90,8 +101,8 @@ module.exports = function ({types: t}) {
                 enter() {
                     shouldInjectFunction = false;
                 },
-                exit(path) {
-                    if (!shouldInjectFunction) {
+                exit(path, state) {
+                    if (!shouldInjectFunction || state.opts.insertHelper === false) {
                         return;
                     }
 
@@ -99,6 +110,28 @@ module.exports = function ({types: t}) {
                 }
             },
 
+            ClassDeclaration(path, state) {
+                let classBody = path.get('body');
+                let nodes = classBody.get('body');
+                let constructor = nodes.find((node) => node.node.kind === 'constructor');
+
+                if (!constructor) {
+                    return;
+                }
+
+                let comment = findComment(constructor, state);
+
+                if (!comment) {
+                    return;
+                }
+
+                executeFunctionTransformation(comment, constructor, `${path.node.id.name}.constructor`);
+            },
+
+            /**
+             * @param {NodePath} path
+             * @param {PluginPass} state
+             */
             VariableDeclaration(path, state) {
                 let comment = findComment(path, state);
 

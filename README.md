@@ -19,14 +19,15 @@ function test(a) {
 // to
 
 function test(a) {
-    __executeTypeCheck__('a', a, 'Number');
+    __executeTypeCheck__('test', 'a', a, 'Number');
     
-    return __executeTypeCheck__('return', a, 'Number');
+    return __executeTypeCheck__('test', 'return', a, 'Number');
 }
 ```
 
 Result:
-<img alt="Console error example" src="https://photos-6.dropbox.com/t/2/AAB8cSiGABZKW84Iic87Fu3ES0qVUpXpUcilJq4ebgJeig/12/45281000/png/32x32/3/1479607200/0/2/console%20error.png/EOWh1yIY6hcgAigCKAU/awovWKctUcwvMtW6F9LqRHKyRkqHQB7ReoK3IoAGUUI?size_mode=3&dl=0&size=1024x768"/>
+<img alt="Console error example" src="https://cloud.githubusercontent.com/assets/5618341/20533157/a42210de-b0ed-11e6-818f-c91fe8866678.png"/>
+
 
 **CAUNTION: Use this plugin only in development, it will slow down your code (a lot of additional function calls).**
 
@@ -40,6 +41,17 @@ _.babelrc_
 ```json
 {
     "plugins": ["jsdoc-runtime-typecheck"]
+}
+```
+_js code_
+```javascript
+/**
+ * @param {String} str
+ * @returns {String}
+ * @typecheck
+ */
+function makeMeLaugh(str) {
+    return str + ' - ha-ha-ha!"
 }
 ```
 
@@ -132,10 +144,17 @@ let myObject = {
 }
 ```
 
-##### Class method
+##### Class constructor and method
 
 ```javascript
 class MyClass {
+    /**
+     * @param {Number} a
+     */
+    constructor(a) {
+        this._a = a;
+    }
+    
     /**
      * @param {Number} a
      * @returns {Number}
@@ -155,7 +174,7 @@ class MyClass {
     /**
      * @param {Number} a
      */
-    get myGetterMethod(a) {
+    set myGetterMethod(a) {
        return this._a = a;
     }
 }

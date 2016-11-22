@@ -14,7 +14,6 @@ function getDirective(state) {
     }
 
     return directive;
-
 }
 
 

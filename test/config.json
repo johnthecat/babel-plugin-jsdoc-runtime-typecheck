@@ -1,0 +1,8 @@
+{
+  "path": {
+    "testsInitialization": "./test/initialization.js",
+    "tests": "./test/controller/",
+    "data": "./test/data/",
+    "plugin": "./src/index.js"
+  }
+}

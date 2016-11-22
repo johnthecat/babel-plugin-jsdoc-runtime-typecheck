@@ -7,7 +7,8 @@ const WRONG_TYPES = {
     'number': 'Number',
     'string': 'String',
     'boolean': 'Boolean',
-    'bool': 'Boolean'
+    'bool': 'Boolean',
+    'any': '*'
 };
 
 /**
