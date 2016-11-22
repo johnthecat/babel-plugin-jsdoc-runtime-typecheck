@@ -31,18 +31,18 @@ Result:
 
 **CAUTION: Use this plugin only in development, it will slow down your code (a lot of additional function calls and large helper function).**
 
-#### Why?
+## Why?
 Flow is good solution, but it adds custom syntax to javascript code and adding it to existing project is quite hard.
 IDE's like Webstorm has good support of jsDoc and can add cool code completion tips, based on users comments.
 So, with this plugin, you can easy start to use benefits of strong typing in javascript code without any pain. Using this plugin in development also will speed up development, because it will reduce number of weird errors and behaviors.
 
 
-### How to
+## How to
 
-#### Install
+### Install
 `npm install babel-plugin-jsdoc-runtime-typecheck --save-dev`
 
-#### Use
+### Use
 _.babelrc_
 ```json
 {
@@ -61,7 +61,7 @@ function makeMeLaugh(str) {
 }
 ```
 
-#### Parameters
+### Configure
 By default, plugin will only parse docs with special directive `@typecheck`, you can change it like this:
 ```
 {
@@ -85,9 +85,9 @@ Then, use it:
  */
 ```
 
-### Supports:
+## Supports:
 
-#### jsDoc tags
+### jsDoc tags
 * `@params` can be optional, supported declarations:
     * `@param {*} name` - no check
     * `@param {Number=} name` - optional
@@ -99,9 +99,9 @@ Then, use it:
     * `@param {{id: Number, name: String}} name` - check defined keys in Object
 * `@returns` or `@return` - type annotation are same as in params.
 
-#### Language constructions
+### Language constructions
 
-##### Function declaration
+#### Function declaration
 
 ```javascript
 /**
@@ -136,7 +136,7 @@ let myArrowFunction = (a) => {
 let myArrowExpressionFunction = (a) => a;
 ```
 
-##### Object method
+#### Object method
 
 ```javascript
 let myObject = {
@@ -150,7 +150,7 @@ let myObject = {
 }
 ```
 
-##### Class constructor and method
+#### Class constructor and method
 
 ```javascript
 class MyClass {
