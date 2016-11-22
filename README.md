@@ -29,7 +29,13 @@ Result:
 <img alt="Console error example" src="https://cloud.githubusercontent.com/assets/5618341/20533157/a42210de-b0ed-11e6-818f-c91fe8866678.png"/>
 
 
-**CAUNTION: Use this plugin only in development, it will slow down your code (a lot of additional function calls).**
+**CAUTION: Use this plugin only in development, it will slow down your code (a lot of additional function calls and large helper function).**
+
+#### Why?
+Flow is good solution, but it adds custom syntax to javascript code and adding it to existing project is quite hard.
+IDE's like Webstorm has good support of jsDoc and can add cool code completion tips, based on users comments.
+So, with this plugin, you can easy start to use benefits of strong typing in javascript code without any pain. Using this plugin in development also will speed up development, because it will reduce number of weird errors and behaviors.
+
 
 ### How to
 
@@ -51,7 +57,7 @@ _js code_
  * @typecheck
  */
 function makeMeLaugh(str) {
-    return str + ' - ha-ha-ha!"
+    return str + ' - ha-ha-ha!';
 }
 ```
 
@@ -86,14 +92,14 @@ Then, use it:
     * `@param {*} name` - no check
     * `@param {Number=} name` - optional
     * `@param {Number} [name]` - optional
-    * `@param {?Number} [name]`
-    * `@param {!Number} [name]`
+    * `@param {?Number} name`
+    * `@param {!Number} name`
     * `@param {Number|String} name`
     * `@param {Array<Number>} name` - check every item in array
     * `@param {{id: Number, name: String}} name` - check defined keys in Object
 * `@returns` or `@return` - type annotation are same as in params.
 
-#### language constructions
+#### Language constructions
 
 ##### Function declaration
 
@@ -174,7 +180,7 @@ class MyClass {
     /**
      * @param {Number} a
      */
-    set myGetterMethod(a) {
+    set mySetterMethod(a) {
        return this._a = a;
     }
 }
