@@ -1,4 +1,4 @@
-const DEFAULT_TYPES = ['Object', 'Number', 'String', 'Boolean', 'Array'];
+const normalizeValidator = require('./normalize-validator');
 
 /**
  * @param {String} functionName
@@ -11,7 +11,6 @@ module.exports = function insertParametersAssertion(functionName, functionTempla
     let parameters = jsDoc.parameters;
     let functionParameters = functionPath.get('params');
     let functionBody = functionPath.get('body');
-    let functionScope = functionPath.scope;
 
     if (!functionBody.isBlockStatement()) {
         return;
@@ -24,7 +23,7 @@ module.exports = function insertParametersAssertion(functionName, functionTempla
      */
     function iterateThroughArrayOfNodes(nodes) {
         let path, node, name;
-        let type, validator;
+        let type;
 
         for (let index = nodes.length - 1; index >= 0; index--) {
             path = nodes[index];
@@ -49,22 +48,13 @@ module.exports = function insertParametersAssertion(functionName, functionTempla
                 continue;
             }
 
-            if (
-                typeof type === 'string' && !DEFAULT_TYPES.includes(type) &&
-                functionScope.hasBinding(type)
-            ) {
-                validator = t.identifier(type);
-            } else {
-                validator = t.stringLiteral(JSON.stringify(type));
-            }
-
             functionBody.unshiftContainer(
                 'body',
                 functionTemplate(
                     functionName,
                     name,
                     node,
-                    validator
+                    normalizeValidator(functionPath, type, t)
                 )
             )
         }

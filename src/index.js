@@ -20,6 +20,7 @@ const findComment = require('./lib/find-comment');
 const parseJsDoc = require('./lib/parse-jsdoc');
 const normalizeFunctionBody = require('./lib/normalize-function-body');
 const insertParametersCheck = require('./lib/insert-parameters-check');
+const normalizeValidator = require('./lib/normalize-validator');
 const typecheckTemplate = require('./lib/typecheck-function-template');
 
 const VISITORS = [
@@ -37,7 +38,7 @@ module.exports = function ({types: t}) {
     const typecheckFunctionDeclaration = typecheckTemplate.function(config.functionName);
     const typecheckFunctionCall = typecheckTemplate.call(config.functionName, t);
 
-    let shouldInjectFunction = false;
+    let shouldInjectHelperFunction = false;
 
     /**
      * @param {String} comment
@@ -69,7 +70,7 @@ module.exports = function ({types: t}) {
             });
         }
 
-        shouldInjectFunction = true;
+        shouldInjectHelperFunction = true;
     }
 
     const returnTypecheckVisitor = {
@@ -78,12 +79,14 @@ module.exports = function ({types: t}) {
                 return;
             }
 
+            let statement = this.jsDoc.returnStatement;
             let argument = path.get('argument');
-            let functionCall =typecheckFunctionCall(
+
+            let functionCall = typecheckFunctionCall(
                 this.functionName,
                 'return',
                 argument.node || t.identifier('undefined'),
-                t.stringLiteral(JSON.stringify(this.jsDoc.returnStatement))
+                normalizeValidator(path, this.jsDoc.returnStatement, t)
             );
 
             argument.replaceWith(functionCall.expression);
@@ -94,10 +97,10 @@ module.exports = function ({types: t}) {
         visitor: {
             Program: {
                 enter() {
-                    shouldInjectFunction = false;
+                    shouldInjectHelperFunction = false;
                 },
                 exit(path, state) {
-                    if (!shouldInjectFunction || state.opts.insertHelper === false) {
+                    if (!shouldInjectHelperFunction || state.opts.insertHelper === false) {
                         return;
                     }
 
