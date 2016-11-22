@@ -105,7 +105,7 @@ module.exports = function parseDoc(comment) {
         parameters[parameter.name] = normalizeTypes(parameter.type);
     }
 
-    let returnStatement = Object.create(null);
+    let returnStatement;
 
     if (returnDescription) {
         returnStatement = normalizeTypes(returnDescription.type);
