@@ -16,7 +16,7 @@
   "scripts": {
     "build": "babel src --out-dir dist",
     "watch": "babel src --watch --out-dir dist",
-    "test": "node test/"
+    "test": "node test"
   },
   "pre-commit": [
     "test",

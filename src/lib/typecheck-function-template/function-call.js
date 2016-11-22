@@ -7,12 +7,20 @@ const babelTemplate = require('babel-template');
 module.exports = (name, t) => {
     let template = babelTemplate(`${name}(FUNCTION_NAME, NAME, ARGUMENT, VALIDATOR);`);
 
-    return (functionName, name, argument, validator) => {
+    /**
+     * @param {String} functionName
+     * @param {String} name
+     * @param {Node} argument
+     * @param {Node} validator
+     */
+    let caller = (functionName, name, argument, validator) => {
         return template({
-            FUNCTION_NAME: functionName ? t.stringLiteral(functionName) : t.stringLiteral('Unnamed function'),
+            FUNCTION_NAME: t.stringLiteral(functionName),
             NAME: t.stringLiteral(name),
             ARGUMENT: argument,
             VALIDATOR: validator
         })
     };
+
+    return caller;
 };

@@ -1,7 +1,11 @@
+/**
+ * CAUTION! This file must be written in ES5 syntax, because it will be included in final client code.
+ * TODO add documentation
+ */
+
 var babelTemplate = require('babel-template');
 
 /**
- * CAUTION! This function must be written in ES5 syntax, because it's included in final client code.
  * @param {String} [functionName]
  * @param {String} parameterName
  * @param {*} parameter

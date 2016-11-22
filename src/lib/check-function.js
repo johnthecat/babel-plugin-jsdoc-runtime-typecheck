@@ -9,6 +9,10 @@ module.exports = (path) => {
      * @type {Array<NodePath>}
      */
     let innerPaths = path.get('body').get('body');
+
+    /**
+     * @type {Array<NodePath>}
+     */
     let expressions = innerPaths.filter((innerPath) => {
         if (!innerPath.isExpressionStatement()) {
             return false;

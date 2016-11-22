@@ -5,11 +5,10 @@ const Mocha = require('mocha');
 
 let mocha = new Mocha();
 
-mocha.addFile(config.path.testsInitialization);
+mocha.addFile(path.resolve(config.path.testsInitialization));
 
 addFilesFrom(mocha, config.path.tests);
 
-// Run the tests.
 mocha.run((failures) => {
     process.on('exit', () => {
         process.exit(failures);  // exit with non-zero status if there were failures

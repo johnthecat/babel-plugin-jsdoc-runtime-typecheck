@@ -31,7 +31,7 @@ Result:
 
 **CAUTION: Use this plugin only in development, it will slow down your code (a lot of additional function calls and large helper function).**
 
-## Why?
+## Motivation
 Flow is good solution, but it adds custom syntax to javascript code and adding it to existing project is quite hard.
 IDE's like Webstorm has good support of jsDoc and can add cool code completion tips, based on users comments.
 So, with this plugin, you can easy start to use benefits of strong typing in javascript code without any pain. Using this plugin in development also will speed up development, because it will reduce number of weird errors and behaviors.
