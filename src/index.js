@@ -79,19 +79,14 @@ module.exports = function ({types: t}) {
             }
 
             let argument = path.get('argument');
-
-            if (!argument.node) {
-                return;
-            }
-
-            argument.replaceWith(
-                typecheckFunctionCall(
-                    this.functionName,
-                    'return',
-                    argument.node,
-                    t.stringLiteral(JSON.stringify(this.jsDoc.returnStatement))
-                )
+            let functionCall =typecheckFunctionCall(
+                this.functionName,
+                'return',
+                argument.node || t.identifier('undefined'),
+                t.stringLiteral(JSON.stringify(this.jsDoc.returnStatement))
             );
+
+            argument.replaceWith(functionCall.expression);
         }
     };
 
