@@ -34,7 +34,8 @@ Result:
 ## Motivation
 Flow is good solution, but it adds custom syntax to javascript code and adding it to existing project is quite hard.
 IDE's like Webstorm has good support of jsDoc and can add cool code completion tips, based on users comments.
-So, with this plugin, you can easy start to use benefits of strong typing in javascript code without any pain. Using this plugin in development also will speed up development, because it will reduce number of weird errors and behaviors.
+So, with this plugin, you can easy start to use benefits of strong typing in javascript code without any pain. 
+Using this plugin in development also will speed up development, because it will reduce number of weird errors and behaviors.
 
 
 ## How to
@@ -49,7 +50,19 @@ _.babelrc_
     "plugins": ["jsdoc-runtime-typecheck"]
 }
 ```
-_js code_
+_js code - global directive_
+```javascript
+// @typecheck
+
+/**
+ * @param {String} str
+ * @returns {String}
+ */
+function makeMeLaugh(str) {
+    return str + ' - ha-ha-ha!';
+}
+```
+_js code - local directive_
 ```javascript
 /**
  * @param {String} str
@@ -78,6 +91,10 @@ By default, plugin will only parse docs with special directive `@typecheck`, you
 ```
 Then, use it:
 ```javascript
+// @makeMeHappy 
+
+// or
+
 /**
  * @makeMeHappy 
  * @param {Number} a

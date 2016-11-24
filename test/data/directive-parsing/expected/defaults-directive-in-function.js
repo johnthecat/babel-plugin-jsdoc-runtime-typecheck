@@ -12,5 +12,5 @@ function test(a, b, c) {
 
   __executeTypecheck__("test", "c", c, "\"Number\"");
 
-  return __executeTypecheck__("test", "return", void 0, "\"Number\"");
+  return __executeTypecheck__("test", "return", a + b + c, "\"Number\"");
 }

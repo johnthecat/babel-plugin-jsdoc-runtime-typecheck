@@ -15,6 +15,7 @@
  */
 
 const config = require('../config.json');
+const findGlobalDirective = require('./lib/find-global-directive');
 const checkFunction = require('./lib/check-function');
 const findComment = require('./lib/find-comment');
 const parseJsDoc = require('./lib/parse-jsdoc');
@@ -38,7 +39,22 @@ module.exports = function ({types: t}) {
     const typecheckFunctionDeclaration = typecheckTemplate.function(config.functionName);
     const typecheckFunctionCall = typecheckTemplate.call(config.functionName, t);
 
+    let hasGlobalDirective = false;
     let shouldInjectHelperFunction = false;
+
+    const HELPERS = {
+        isDeclarationIsFunction(declaration) {
+            return declaration.get('init').isFunction();
+        },
+
+        isPathIsConstructor(path) {
+            return path.node.kind === 'constructor'
+        },
+
+        isPathIsExpression(path) {
+            return path.isExpressionStatement()
+        }
+    };
 
     /**
      * @param {String} comment
@@ -85,8 +101,8 @@ module.exports = function ({types: t}) {
             let functionCall = typecheckFunctionCall(
                 this.functionName,
                 'return',
-                argument.node || t.identifier('undefined'),
-                normalizeValidator(path, this.jsDoc.returnStatement, t)
+                argument.node || t.identifier('void 0'),
+                normalizeValidator(path, statement, t)
             );
 
             argument.replaceWith(functionCall.expression);
@@ -96,7 +112,8 @@ module.exports = function ({types: t}) {
     return {
         visitor: {
             Program: {
-                enter() {
+                enter(path, state) {
+                    hasGlobalDirective = findGlobalDirective(path, state);
                     shouldInjectHelperFunction = false;
                 },
                 exit(path, state) {
@@ -111,13 +128,13 @@ module.exports = function ({types: t}) {
             ClassDeclaration(path, state) {
                 let classBody = path.get('body');
                 let nodes = classBody.get('body');
-                let constructor = nodes.find((node) => node.node.kind === 'constructor');
+                let constructor = nodes.find(HELPERS.isPathIsConstructor);
 
                 if (!constructor) {
                     return;
                 }
 
-                let comment = findComment(constructor, state);
+                let comment = findComment(constructor, state, hasGlobalDirective);
 
                 if (!comment) {
                     return;
@@ -131,14 +148,14 @@ module.exports = function ({types: t}) {
              * @param {PluginPass} state
              */
             VariableDeclaration(path, state) {
-                let comment = findComment(path, state);
+                let comment = findComment(path, state, hasGlobalDirective);
 
                 if (!comment) {
                     return;
                 }
 
                 let declarations = path.get('declarations');
-                let functionDeclaration = declarations.find((declaration) => declaration.get('init').isFunction());
+                let functionDeclaration = declarations.find(HELPERS.isDeclarationIsFunction);
 
                 if (!functionDeclaration) {
                     return;
@@ -154,7 +171,7 @@ module.exports = function ({types: t}) {
                     return;
                 }
 
-                let comment = findComment(path, state);
+                let comment = findComment(path, state, hasGlobalDirective);
 
                 if (!comment) {
                     return;
@@ -170,8 +187,8 @@ module.exports = function ({types: t}) {
                     return;
                 }
 
-                let expression = path.find((parent) => parent.isExpressionStatement());
-                let comment = findComment(expression, state);
+                let expression = path.find(HELPERS.isPathIsExpression);
+                let comment = findComment(expression, state, hasGlobalDirective);
 
                 if (!comment) {
                     return;
@@ -187,7 +204,7 @@ module.exports = function ({types: t}) {
                     return;
                 }
 
-                let comment = findComment(path, state);
+                let comment = findComment(path, state, hasGlobalDirective);
 
                 if (!comment) {
                     return;
@@ -197,7 +214,7 @@ module.exports = function ({types: t}) {
             },
 
             [VISITORS.join('|')](path, state) {
-                let comment = findComment(path, state);
+                let comment = findComment(path, state, hasGlobalDirective);
 
                 if (!comment) {
                     return;

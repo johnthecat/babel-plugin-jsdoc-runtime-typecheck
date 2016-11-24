@@ -6,5 +6,5 @@
  * @typecheck
  */
 function test(a, b, c) {
-  return;
+    return a + b + c;
 }

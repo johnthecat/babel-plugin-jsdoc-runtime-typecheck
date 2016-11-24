@@ -2,7 +2,7 @@ const DEFAULT_TYPES = ['Object', 'Number', 'String', 'Boolean', 'Array'];
 
 /**
  * @param {NodePath} path
- * @param {String} type
+ * @param {String|Object|Array} type
  * @param {Object} t
  * @returns {Node}
  */

@@ -20,9 +20,10 @@ function getDirective(state) {
 /**
  * @param {NodePath} path
  * @param {Object} state
+ * @param {Boolean} hasGlobalDirective
  * @returns {String}
  */
-module.exports = function findRelativeComment(path, state) {
+module.exports = function findRelativeComment(path, state, hasGlobalDirective) {
     if (!path.node.leadingComments) {
         return null;
     }
@@ -54,7 +55,7 @@ module.exports = function findRelativeComment(path, state) {
 
     let foundedComment;
 
-    if (typeof directive === 'string') {
+    if (typeof directive === 'string' && !hasGlobalDirective) {
         foundedComment = foundedCommentsCollection.find((comment) => comment.value.includes(`@${directive}`));
     } else {
         foundedComment = foundedCommentsCollection[foundedCommentsCollection.length - 1];
