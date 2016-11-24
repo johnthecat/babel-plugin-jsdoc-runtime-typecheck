@@ -38,5 +38,11 @@ describe('Directive parsing', function () {
 
             compare(files.fileSource, files.fileExpected);
         });
+
+        it('transform code without collision in directives', () => {
+            let files = read('defaults-collision-between-global-and-local.js');
+
+            compare(files.fileSource, files.fileExpected);
+        });
     });
 });

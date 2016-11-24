@@ -24,10 +24,14 @@ function normalizeConstructorName(name) {
 }
 
 /**
- * @param {Object} type
- * @returns {undefined|String|Array|Object}
+ * @param {Object|null} type
+ * @returns {String|Array|Object|null}
  */
 function normalizeTypes(type) {
+    if (!type) {
+        return null;
+    }
+
     switch (type.type) {
         case 'AllLiteral':
             return void(0);

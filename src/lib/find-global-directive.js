@@ -27,5 +27,12 @@ module.exports = (path, state) => {
         return false;
     }
 
-    return topComments.find((comment) => comment.value.includes(`@${useDirective}`));
+    return topComments.find((comment) => {
+            return (
+                comment.value.includes(`@${useDirective}`) &&
+               !comment.value.includes(`@param`) &&
+               !comment.value.includes(`@return`)
+            );
+        }
+    );
 };

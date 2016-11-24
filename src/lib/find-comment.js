@@ -53,12 +53,10 @@ module.exports = function findRelativeComment(path, state, hasGlobalDirective) {
         )
     });
 
-    let foundedComment;
+    let foundedComment = foundedCommentsCollection[foundedCommentsCollection.length - 1];
 
     if (typeof directive === 'string' && !hasGlobalDirective) {
-        foundedComment = foundedCommentsCollection.find((comment) => comment.value.includes(`@${directive}`));
-    } else {
-        foundedComment = foundedCommentsCollection[foundedCommentsCollection.length - 1];
+        foundedComment = foundedComment.value.includes(`@${directive}`) ? foundedComment : null;
     }
 
     return foundedComment ? foundedComment.value : null;
