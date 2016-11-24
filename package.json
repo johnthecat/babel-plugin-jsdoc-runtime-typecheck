@@ -14,7 +14,8 @@
   },
   "main": "dist/index.js",
   "scripts": {
-    "build": "babel src --out-dir dist",
+    "eslint": "eslint -c .eslintrc src/",
+    "build": "npm run eslint && babel src --out-dir dist",
     "watch": "babel src --watch --out-dir dist",
     "test": "node test"
   },

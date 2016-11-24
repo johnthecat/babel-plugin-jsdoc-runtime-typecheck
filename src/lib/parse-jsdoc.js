@@ -126,5 +126,5 @@ module.exports = function parseDoc(comment) {
         name,
         parameters,
         returnStatement
-    }
+    };
 };

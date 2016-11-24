@@ -48,11 +48,11 @@ module.exports = function ({types: t}) {
         },
 
         isPathIsConstructor(path) {
-            return path.node.kind === 'constructor'
+            return path.node.kind === 'constructor';
         },
 
         isPathIsExpression(path) {
-            return path.isExpressionStatement()
+            return path.isExpressionStatement();
         }
     };
 

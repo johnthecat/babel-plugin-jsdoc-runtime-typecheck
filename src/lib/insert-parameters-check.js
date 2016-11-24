@@ -56,7 +56,7 @@ module.exports = function insertParametersAssertion(functionName, functionTempla
                     node,
                     normalizeValidator(functionPath, type, t)
                 )
-            )
+            );
         }
     }
 };

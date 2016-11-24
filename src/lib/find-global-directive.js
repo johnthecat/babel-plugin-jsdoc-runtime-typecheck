@@ -28,11 +28,10 @@ module.exports = (path, state) => {
     }
 
     return topComments.find((comment) => {
-            return (
-                comment.value.includes(`@${useDirective}`) &&
-               !comment.value.includes(`@param`) &&
-               !comment.value.includes(`@return`)
-            );
-        }
-    );
+        return (
+            comment.value.includes(`@${useDirective}`) &&
+           !comment.value.includes('@param') &&
+           !comment.value.includes('@return')
+        );
+    });
 };

@@ -50,7 +50,7 @@ module.exports = function findRelativeComment(path, state, hasGlobalDirective) {
         return (
             comment.start > previousNodeEnd &&
             comment.end < functionDeclarationStart
-        )
+        );
     });
 
     let foundedComment = foundedCommentsCollection[foundedCommentsCollection.length - 1];

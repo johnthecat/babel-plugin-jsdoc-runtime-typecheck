@@ -1,6 +1,6 @@
 const babelTemplate = require('babel-template');
 
-const bodyTemplate = babelTemplate(`{ return STATEMENT }`);
+const bodyTemplate = babelTemplate('{ return STATEMENT }');
 
 module.exports = (path) => {
     if (path.node.expression) {

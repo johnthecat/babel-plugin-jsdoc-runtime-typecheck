@@ -19,7 +19,7 @@ module.exports = (name, t) => {
             NAME: t.stringLiteral(name),
             ARGUMENT: argument,
             VALIDATOR: validator
-        })
+        });
     };
 
     return caller;
