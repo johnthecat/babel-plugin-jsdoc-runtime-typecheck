@@ -1,6 +1,6 @@
 {
   "name": "babel-plugin-jsdoc-runtime-typecheck",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "description": "Babel plugin, that adds typecheck, based on jsDoc.",
   "license": "MIT",
   "homepage": "https://github.com/johnthecat/babel-plugin-jsdoc-runtime-typecheck.git",
