@@ -36,7 +36,7 @@ function __TYPECHECKFUNCTION__(functionName, parameterName, parameter, validator
             'It\'s "' + (invalidType || parameter) + '" now, but must have ' + makeTypeReadable(validator) + ' type.'
         );
 
-        throw new Error(error);
+        throw new TypeError(error);
     }
 
     return parameter;

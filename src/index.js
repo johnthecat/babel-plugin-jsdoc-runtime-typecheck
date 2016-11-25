@@ -24,9 +24,7 @@ const insertParametersCheck = require('./lib/insert-parameters-check');
 const normalizeValidator = require('./lib/normalize-validator');
 const typecheckTemplate = require('./lib/typecheck-function-template');
 
-const VISITORS = [
-    'ClassMethod',
-    'ObjectMethod',
+const FUNCTION_VISITORS = [
     'FunctionDeclaration',
     'ArrowFunctionExpression'
 ];
@@ -106,6 +104,8 @@ module.exports = function ({types: t}) {
             );
 
             argument.replaceWith(functionCall.expression);
+
+            path.skip();
         }
     };
 
@@ -123,24 +123,6 @@ module.exports = function ({types: t}) {
 
                     path.pushContainer('body', typecheckFunctionDeclaration());
                 }
-            },
-
-            ClassDeclaration(path, state) {
-                let classBody = path.get('body');
-                let nodes = classBody.get('body');
-                let constructor = nodes.find(HELPERS.isPathIsConstructor);
-
-                if (!constructor) {
-                    return;
-                }
-
-                let comment = findComment(constructor, state, hasGlobalDirective);
-
-                if (!comment) {
-                    return;
-                }
-
-                executeFunctionTransformation(comment, constructor, `${path.node.id.name}.constructor`);
             },
 
             /**
@@ -213,7 +195,39 @@ module.exports = function ({types: t}) {
                 executeFunctionTransformation(comment, value);
             },
 
-            [VISITORS.join('|')](path, state) {
+            ClassMethod(path, state) {
+                let comment = findComment(path, state, hasGlobalDirective);
+
+                if (!comment) {
+                    return;
+                }
+
+                let classDeclaration = path.find((parent) => parent.isClassDeclaration());
+                let className = classDeclaration.node.id.name;
+
+                if (path.node.kind === 'constructor') {
+                    executeFunctionTransformation(comment, path, `${className}.constructor`);
+                } else {
+                    let node = path.node;
+
+                    executeFunctionTransformation(
+                        comment, path,
+                        `${node.static ? 'static ' : ''}${node.kind} ${className}.${node.key.name}`
+                    );
+                }
+            },
+
+            ObjectMethod(path, state) {
+                let comment = findComment(path, state, hasGlobalDirective);
+
+                if (!comment) {
+                    return;
+                }
+
+                executeFunctionTransformation(comment, path, path.node.key.name);
+            },
+
+            [FUNCTION_VISITORS.join('|')](path, state) {
                 let comment = findComment(path, state, hasGlobalDirective);
 
                 if (!comment) {

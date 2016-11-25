@@ -21,14 +21,16 @@ function getDirective(state) {
  * @param {NodePath} path
  * @param {Object} state
  * @param {Boolean} hasGlobalDirective
- * @returns {String}
+ * @returns {String|null}
  */
 module.exports = function findRelativeComment(path, state, hasGlobalDirective) {
-    if (!path.node.leadingComments) {
+    let node = path.node;
+
+    if (!node.leadingComments) {
         return null;
     }
 
-    let comments = path.node.leadingComments;
+    let comments = node.leadingComments;
     let directive = getDirective(state);
 
     let previousNode = path.key !== 0 ? path.getSibling(path.key - 1) : null;
@@ -41,9 +43,9 @@ module.exports = function findRelativeComment(path, state, hasGlobalDirective) {
      * Workaround: find function body and get it's start index.
      */
     if (path.isObjectProperty()) {
-        functionDeclarationStart = path.node.start || path.get('value').get('body').node.start;
+        functionDeclarationStart = node.start || path.get('value').get('body').node.start;
     } else {
-        functionDeclarationStart = path.node.start;
+        functionDeclarationStart = node.start;
     }
 
     let foundedCommentsCollection = comments.filter((comment) => {
@@ -52,6 +54,10 @@ module.exports = function findRelativeComment(path, state, hasGlobalDirective) {
             comment.end < functionDeclarationStart
         );
     });
+
+    if (!foundedCommentsCollection.length) {
+        return null;
+    }
 
     let foundedComment = foundedCommentsCollection[foundedCommentsCollection.length - 1];
 

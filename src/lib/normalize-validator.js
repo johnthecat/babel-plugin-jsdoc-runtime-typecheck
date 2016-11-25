@@ -1,4 +1,4 @@
-const DEFAULT_TYPES = ['Object', 'Number', 'String', 'Boolean', 'Array'];
+const DEFAULT_TYPES = ['Object', 'Number', 'String', 'Boolean', 'Array', 'Function'];
 
 /**
  * @param {NodePath} path
