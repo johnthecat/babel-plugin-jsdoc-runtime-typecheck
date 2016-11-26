@@ -4,7 +4,7 @@ const chai = require('chai');
 const babel = require('babel-core');
 
 const DEFAULT_BABEL_PLUGIN_PARAMETER = {
-    insertHelper: false
+    _insertHelper: false
 };
 
 const ERROR = {

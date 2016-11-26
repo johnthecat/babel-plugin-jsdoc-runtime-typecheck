@@ -1,7 +1,8 @@
 {
   "default": {
     "useDirective": "typecheck",
-    "useStrict": false
+    "useStrict": false,
+    "_useHelper": true
   },
   "doctrineConfig": {
     "unwrap": true,

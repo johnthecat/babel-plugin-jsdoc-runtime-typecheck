@@ -23,7 +23,7 @@ function getDirective(state) {
  * @param {Boolean} hasGlobalDirective
  * @returns {String|null}
  */
-module.exports = function findRelativeComment(path, state, hasGlobalDirective) {
+module.exports = (path, state, hasGlobalDirective) => {
     let node = path.node;
 
     if (!node.leadingComments) {

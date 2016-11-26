@@ -12,7 +12,7 @@ const FUNCTION_VISITORS = [
     'ArrowFunctionExpression'
 ];
 
-const HELPERS = {
+const helpers = {
     isDeclarationIsFunction(declaration) {
         return declaration.get('init').isFunction();
     },
@@ -26,7 +26,13 @@ const HELPERS = {
     }
 };
 
-module.exports = (typecheckFunctionDeclaration, typecheckFunctionCall, t, globalState) => {
+/**
+ * @param {Function} typecheckFunctionCall
+ * @param {Object} t
+ * @param {Object} globalState
+ * @returns {Object}
+ */
+module.exports = (typecheckFunctionCall, t, globalState) => {
     const returnTypecheckVisitor = returnStatementVisitorFactory(typecheckFunctionCall, globalState, t);
 
     /**
@@ -51,7 +57,6 @@ module.exports = (typecheckFunctionDeclaration, typecheckFunctionCall, t, global
 
         insertParametersCheck(functionName, typecheckFunctionCall, path, jsDoc, globalState.useStrict, t);
 
-
         path.traverse(returnTypecheckVisitor, {
             jsDoc: jsDoc,
             functionPath: path,
@@ -75,7 +80,7 @@ module.exports = (typecheckFunctionDeclaration, typecheckFunctionCall, t, global
             }
 
             let declarations = path.get('declarations');
-            let functionDeclaration = declarations.find(HELPERS.isDeclarationIsFunction);
+            let functionDeclaration = declarations.find(helpers.isDeclarationIsFunction);
 
             if (!functionDeclaration) {
                 return;
@@ -107,7 +112,7 @@ module.exports = (typecheckFunctionDeclaration, typecheckFunctionCall, t, global
                 return;
             }
 
-            let expression = path.find(HELPERS.isPathIsExpression);
+            let expression = path.find(helpers.isPathIsExpression);
             let comment = findComment(expression, state, globalState.hasGlobalDirective);
 
             if (!comment) {

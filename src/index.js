@@ -28,27 +28,29 @@ const functionVisitorsFactory = require('./visitors');
 module.exports = function ({types: t}) {
     const typecheckFunctionDeclaration = typecheckTemplate.function(config.functionName);
     const typecheckFunctionCall = typecheckTemplate.call(config.functionName, t);
+
     const globalState = Object.create(null);
+    const basicStateControlVisitor = {
+        Program: {
+            enter(path, state) {
+                globalState.hasGlobalDirective = findGlobalDirective(path, state);
+                globalState.shouldInjectHelperFunction = false;
+                globalState.useStrict = state.opts.useStrict || config.default.useStrict;
+            },
+            exit(path, state) {
+                if (!globalState.shouldInjectHelperFunction || state.opts._insertHelper === false) {
+                    return;
+                }
+
+                path.pushContainer('body', typecheckFunctionDeclaration());
+            }
+        }
+    };
 
     return {
         visitor: Object.assign(
-            {
-                Program: {
-                    enter(path, state) {
-                        globalState.hasGlobalDirective = findGlobalDirective(path, state);
-                        globalState.shouldInjectHelperFunction = false;
-                        globalState.useStrict = state.opts.useStrict || config.default.useStrict;
-                    },
-                    exit(path, state) {
-                        if (!globalState.shouldInjectHelperFunction || state.opts.insertHelper === false) {
-                            return;
-                        }
-
-                        path.pushContainer('body', typecheckFunctionDeclaration());
-                    }
-                }
-            },
-            functionVisitorsFactory(typecheckFunctionDeclaration, typecheckFunctionCall, t, globalState)
+            basicStateControlVisitor,
+            functionVisitorsFactory(typecheckFunctionCall, t, globalState)
         )
     };
 };

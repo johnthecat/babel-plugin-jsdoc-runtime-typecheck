@@ -1,6 +1,12 @@
 const strictMode = require('../lib/strict-mode');
 const normalizeValidator = require('../lib/normalize-validator');
 
+/**
+ * @param {Function} typecheckFunctionCall
+ * @param {Object} globalState
+ * @param {Object} t
+ * @returns {{ReturnStatement: Function}}
+ */
 module.exports = (typecheckFunctionCall, globalState, t) => {
     return {
         ReturnStatement(path) {
@@ -16,14 +22,14 @@ module.exports = (typecheckFunctionCall, globalState, t) => {
                  * Case: function doesn't return anything, but can stop self execution with return statement.
                  */
                 if (!statement && argument.node) {
-                    strictMode.callError(path, strictMode.ERROR.NO_RETURN_IN_JSDOC);
+                    strictMode.throwException(path, strictMode.ERROR.NO_RETURN_IN_JSDOC);
                 }
 
                 /**
                  * Case: return in described in jsDoc, but real return statement in function is empty.
                  */
                 if (!argument.node && statement) {
-                    strictMode.callError(path, strictMode.ERROR.EMPTY_RETURN_IN_FUNCTION);
+                    strictMode.throwException(path, strictMode.ERROR.EMPTY_RETURN_IN_FUNCTION);
                 }
             }
 

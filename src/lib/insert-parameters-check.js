@@ -6,10 +6,10 @@ const strictMode = require('./strict-mode');
  * @param {Function} functionTemplate
  * @param {NodePath} functionPath
  * @param {Object} jsDoc
- * @param {Boolean} strict
- * @param t
+ * @param {Boolean} useStrict
+ * @param {Object} t
  */
-module.exports = function insertParametersAssertion(functionName, functionTemplate, functionPath, jsDoc, strict, t) {
+module.exports = (functionName, functionTemplate, functionPath, jsDoc, useStrict, t) => {
     let parameters = jsDoc.parameters;
     let functionParameters = functionPath.get('params');
     let functionBody = functionPath.get('body');
@@ -18,24 +18,28 @@ module.exports = function insertParametersAssertion(functionName, functionTempla
         return;
     }
 
-    iterateThroughArrayOfNodes(functionParameters);
+    let countOfInsertedArguments = iterateThroughArrayOfNodes(functionParameters);
+
+    if (useStrict) {
+        let parametersKeys = Object.keys(parameters);
+
+        if (parametersKeys.length > countOfInsertedArguments) {
+            strictMode.throwException(functionPath, strictMode.ERROR.UNUSED_ARGUMENTS_IN_JSDOC);
+        }
+    }
 
     /**
      * @param {Array<NodePath>} nodes
+     * @returns {Number}
      */
     function iterateThroughArrayOfNodes(nodes) {
+        let shouldThrowException = true;
+        let count = 0;
         let path, node, name;
         let type;
 
-        if (strict) {
-            let parametesKeys = Object.keys(parameters);
-
-            if (parametesKeys.length > nodes.length) {
-                strictMode.callError(functionPath, strictMode.ERROR.UNUSED_ARGUMENTS_IN_JSDOC);
-            }
-        }
-
         for (let index = nodes.length - 1; index >= 0; index--) {
+            shouldThrowException = true;
             path = nodes[index];
             node = path.node;
 
@@ -44,13 +48,18 @@ module.exports = function insertParametersAssertion(functionName, functionTempla
             } else if (path.isRestElement()) {
                 node = node.argument;
             } else if (path.isObjectProperty()) {
-                node = node.key;
+                shouldThrowException = false;
+                count += iterateThroughArrayOfNodes(
+                    [path.get('value')]
+                );
             } else if (path.isObjectPattern()) {
-                iterateThroughArrayOfNodes(
+                shouldThrowException = false;
+                count += iterateThroughArrayOfNodes(
                     path.get('properties')
                 );
             } else if (path.isArrayPattern()) {
-                iterateThroughArrayOfNodes(
+                shouldThrowException = false;
+                count += iterateThroughArrayOfNodes(
                     path.get('elements')
                 );
             }
@@ -59,12 +68,14 @@ module.exports = function insertParametersAssertion(functionName, functionTempla
             type = parameters[name];
 
             if (!type) {
-                if (strict) {
-                    strictMode.callError(path, strictMode.ERROR.NO_ARGUMENT_IN_JSDOC);
+                if (useStrict && shouldThrowException) {
+                    strictMode.throwException(path, strictMode.ERROR.NO_ARGUMENT_IN_JSDOC);
                 }
 
                 continue;
             }
+
+            count++;
 
             functionBody.unshiftContainer(
                 'body',
@@ -76,5 +87,7 @@ module.exports = function insertParametersAssertion(functionName, functionTempla
                 )
             );
         }
+
+        return count;
     }
 };

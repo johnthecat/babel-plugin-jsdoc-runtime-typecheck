@@ -84,9 +84,9 @@ function normalizeTypes(type) {
 
 /**
  * @param {String} comment - comment with jsDoc
- * @returns {{parameters: Object, returnStatement: Object, name: [String]}}
+ * @returns {{parameters: Object, returnStatement: Object, name: String}|null}
  */
-module.exports = function parseDoc(comment) {
+module.exports = (comment) => {
     /**
      * @type {{tags: Array<Object>, description: String}}
      */
