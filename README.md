@@ -2,6 +2,7 @@
 
 [![npm](https://img.shields.io/npm/v/babel-plugin-jsdoc-runtime-typecheck.svg)](https://www.npmjs.com/package/babel-plugin-jsdoc-runtime-typecheck)
 [![license](https://img.shields.io/github/license/johnthecat/babel-plugin-jsdoc-runtime-typecheck.svg)](https://github.com/johnthecat/babel-plugin-jsdoc-runtime-typecheck/blob/master/LICENSE)
+[![npm](https://img.shields.io/npm/dt/babel-plugin-jsdoc-runtime-typecheck.svg)](https://www.npmjs.com/package/babel-plugin-jsdoc-runtime-typecheck)
 
 ## Overview
 This plugin will add runtime typecheck, based on [jsDoc](http://usejsdoc.org/) annotation.
@@ -77,15 +78,17 @@ function makeMeLaugh(str) {
 ```
 
 ### Configure
+
+#### useDirective
 By default, plugin will only parse docs with special directive `@typecheck`, you can change it like this:
-```
+```json
 {
     "plugins": [
         ["jsdoc-runtime-typecheck",
             {
                 //useDirective: 'typecheck' - this is default
                 //useDirective: false - if you want to check all functions with jsDoc (useful for new projects)
-                useDirective: 'makeMeHappy' - your custom directive
+                useDirective: 'makeMeHappy' - your custom directive,
             }
         ]
     ]
@@ -102,6 +105,48 @@ Then, use it:
  * @param {Number} a
  * @returns {Number}
  */
+```
+
+#### useStrict
+You can enable strict mode - in this mode plugin throw compilation exception when it can find error by static analyze.
+
+Setup:
+```json
+{
+    "plugins": [
+        ["jsdoc-runtime-typecheck",
+            {
+                //useStrict: false - default
+                useStrict: true
+            }
+        ]
+    ]
+}
+```
+Use:
+
+Code:
+```javascript
+/**
+ * @param {Number} a
+ * @param {Number} b
+ * @returns {Number}
+ * @typecheck
+ */
+function test(a, b, c) {
+    return a + b + c;
+}
+```
+Result in console:
+```bash
+SyntaxError: input.js: [TYPECHECK STRICT MODE]: This argument isn't covered by jsDoc comment, please, provide more info.
+   5 |  * @typecheck
+   6 |  */
+>  7 | function test(a, b, c) {
+     |                     ^
+   8 |     return a + b + c;
+   9 | }
+  10 | 
 ```
 
 ## Supports:
