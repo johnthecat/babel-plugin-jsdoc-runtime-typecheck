@@ -1,7 +1,7 @@
 {
   "default": {
     "useDirective": "typecheck",
-    "useGlobalDirective": false
+    "useStrict": false
   },
   "doctrineConfig": {
     "unwrap": true,
