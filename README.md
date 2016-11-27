@@ -81,7 +81,7 @@ function makeMeLaugh(str) {
 
 #### useDirective
 By default, plugin will only parse docs with special directive `@typecheck`, you can change it like this:
-```json
+```
 {
     "plugins": [
         ["jsdoc-runtime-typecheck",
@@ -111,7 +111,7 @@ Then, use it:
 You can enable strict mode - in this mode plugin throw compilation exception when it can find error by static analyze.
 
 Setup:
-```json
+```
 {
     "plugins": [
         ["jsdoc-runtime-typecheck",
