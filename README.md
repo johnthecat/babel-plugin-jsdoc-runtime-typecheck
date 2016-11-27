@@ -3,6 +3,7 @@
 [![npm](https://img.shields.io/npm/v/babel-plugin-jsdoc-runtime-typecheck.svg)](https://www.npmjs.com/package/babel-plugin-jsdoc-runtime-typecheck)
 [![license](https://img.shields.io/github/license/johnthecat/babel-plugin-jsdoc-runtime-typecheck.svg)](https://github.com/johnthecat/babel-plugin-jsdoc-runtime-typecheck/blob/master/LICENSE)
 [![npm](https://img.shields.io/npm/dt/babel-plugin-jsdoc-runtime-typecheck.svg)](https://www.npmjs.com/package/babel-plugin-jsdoc-runtime-typecheck)
+[![Travis](https://img.shields.io/travis/johnthecat/babel-plugin-jsdoc-runtime-typecheck.svg)](https://travis-ci.org/johnthecat/babel-plugin-jsdoc-runtime-typecheck)
 
 ## Overview
 This plugin will add runtime typecheck, based on [jsDoc](http://usejsdoc.org/) annotation.
