@@ -7,11 +7,6 @@ const normalizeFunctionBody = require('../lib/normalize-function-body');
 const insertParametersCheck = require('../lib/insert-parameters-check');
 const returnStatementVisitorFactory = require('./return-statement');
 
-const FUNCTION_VISITORS = [
-    'FunctionDeclaration',
-    'ArrowFunctionExpression'
-];
-
 const helpers = {
     isDeclarationIsFunction(declaration) {
         return declaration.get('init').isFunction();
@@ -23,6 +18,10 @@ const helpers = {
 
     isPathIsExpression(path) {
         return path.isExpressionStatement();
+    },
+
+    isPathIsClassDeclaration(parent) {
+        return parent.isClassDeclaration();
     }
 };
 
@@ -89,6 +88,10 @@ module.exports = (typecheckFunctionCall, t, globalState) => {
             executeFunctionTransformation(comment, functionDeclaration.get('init'));
         },
 
+        /**
+         * @param {NodePath} path
+         * @param {PluginPass} state
+         */
         ReturnStatement(path, state) {
             let argument = path.get('argument');
 
@@ -105,6 +108,10 @@ module.exports = (typecheckFunctionCall, t, globalState) => {
             executeFunctionTransformation(comment, argument);
         },
 
+        /**
+         * @param {NodePath} path
+         * @param {PluginPass} state
+         */
         AssignmentExpression(path, state) {
             let rightPath = path.get('right');
 
@@ -122,6 +129,10 @@ module.exports = (typecheckFunctionCall, t, globalState) => {
             executeFunctionTransformation(comment, rightPath);
         },
 
+        /**
+         * @param {NodePath} path
+         * @param {PluginPass} state
+         */
         ObjectProperty(path, state) {
             let value = path.get('value');
 
@@ -138,6 +149,10 @@ module.exports = (typecheckFunctionCall, t, globalState) => {
             executeFunctionTransformation(comment, value, path.node.key.name);
         },
 
+        /**
+         * @param {NodePath} path
+         * @param {PluginPass} state
+         */
         ClassMethod(path, state) {
             let comment = findComment(path, state, globalState.hasGlobalDirective);
 
@@ -145,7 +160,7 @@ module.exports = (typecheckFunctionCall, t, globalState) => {
                 return;
             }
 
-            let classDeclaration = path.find((parent) => parent.isClassDeclaration());
+            let classDeclaration = path.find(helpers.isPathIsClassDeclaration);
             let className = classDeclaration.node.id.name;
             let node = path.node;
             let kind = node.kind === 'constructor' ? '' : node.kind + ' ';
@@ -157,6 +172,10 @@ module.exports = (typecheckFunctionCall, t, globalState) => {
 
         },
 
+        /**
+         * @param {NodePath} path
+         * @param {PluginPass} state
+         */
         ObjectMethod(path, state) {
             let comment = findComment(path, state, globalState.hasGlobalDirective);
 
@@ -167,7 +186,11 @@ module.exports = (typecheckFunctionCall, t, globalState) => {
             executeFunctionTransformation(comment, path, path.node.key.name);
         },
 
-        [FUNCTION_VISITORS.join('|')](path, state) {
+        /**
+         * @param {NodePath} path
+         * @param {PluginPass} state
+         */
+        'FunctionDeclaration|ArrowFunctionExpression'(path, state) {
             let comment = findComment(path, state, globalState.hasGlobalDirective);
 
             if (!comment) {

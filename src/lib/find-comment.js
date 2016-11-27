@@ -1,7 +1,7 @@
 const config = require('../../config.json');
 
 /**
- * @param {Object} state
+ * @param {PluginPass} state
  * @returns {String|Boolean}
  */
 function getDirective(state) {
@@ -19,7 +19,7 @@ function getDirective(state) {
 
 /**
  * @param {NodePath} path
- * @param {Object} state
+ * @param {PluginPass} state
  * @param {Boolean} hasGlobalDirective
  * @returns {String|null}
  */
@@ -48,14 +48,12 @@ module.exports = (path, state, hasGlobalDirective) => {
         functionDeclarationStart = node.start;
     }
 
-    let foundedCommentsCollection = comments.filter((comment) => {
-        return (
-            comment.start > previousNodeEnd &&
-            comment.end < functionDeclarationStart
-        );
-    });
+    let foundedCommentsCollection = comments.filter((comment) => (
+        comment.start > previousNodeEnd &&
+        comment.end < functionDeclarationStart
+    ));
 
-    if (!foundedCommentsCollection.length) {
+    if (foundedCommentsCollection.length === 0) {
         return null;
     }
 

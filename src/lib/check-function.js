@@ -24,5 +24,5 @@ module.exports = (path) => {
         );
     });
 
-    return !expressions.length;
+    return expressions.length === 0;
 };
