@@ -4,8 +4,8 @@ const fs = require('fs');
 const config = require('../config.json');
 const compare = require('../helpers/compare');
 
-const SOURCE_DIRECTORY = path.join(config.path.data, '/directive-parsing/src');
-const EXPECTED_DIRECTORY = path.join(config.path.data, '/directive-parsing/expected');
+const SOURCE_DIRECTORY = path.join(config.path.data, 'directive-parsing', 'src');
+const EXPECTED_DIRECTORY = path.join(config.path.data, 'directive-parsing', 'expected');
 
 const FILE_ENCODING = 'utf8';
 

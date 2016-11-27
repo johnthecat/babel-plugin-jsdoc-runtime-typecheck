@@ -27,11 +27,11 @@ const helpers = {
 
 /**
  * @param {Function} typecheckFunctionCall
- * @param {Object} t
  * @param {Object} globalState
+ * @param {Object} t
  * @returns {Object}
  */
-module.exports = (typecheckFunctionCall, t, globalState) => {
+module.exports = (typecheckFunctionCall, globalState, t) => {
     const returnTypecheckVisitor = returnStatementVisitorFactory(typecheckFunctionCall, globalState, t);
 
     /**

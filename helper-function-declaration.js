@@ -18,15 +18,15 @@ function __TYPECHECKFUNCTION__(functionName, parameterName, parameter, validator
     var valid = false;
 
     if (typeof validatorSource !== 'string') {
-        valid = parameter instanceof validatorSource;
+        if (typeof validator === 'function') {
+            valid = parameter instanceof validatorSource;
+        } else {
+            valid = parameter === validator;
+        }
     } else {
         var validator = JSON.parse(validatorSource);
 
-        if (validator === null) {
-            valid = parameter === validator;
-        } else {
-            valid = validateByType(parameter, validator);
-        }
+        valid = validateByType(parameter, validator);
     }
 
     if (!valid) {
@@ -180,6 +180,6 @@ function __TYPECHECKFUNCTION__(functionName, parameterName, parameter, validator
 /**
  * @param {String} name
  */
-module.exports = function(name) {
+module.exports = function (name) {
     return babelTemplate(__TYPECHECKFUNCTION__.toString().replace('__TYPECHECKFUNCTION__', name));
 };

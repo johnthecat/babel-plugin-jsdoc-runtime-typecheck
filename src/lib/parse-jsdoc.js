@@ -25,42 +25,42 @@ function normalizeConstructorName(name) {
 
 /**
  * @param {Object|null} type
- * @returns {String|Array|Object|null}
+ * @returns {String|Array|Object|null|undefined}
  */
 function normalizeTypes(type) {
     if (!type) {
-        return null;
+        return void(0);
     }
 
     switch (type.type) {
-        case 'AllLiteral':
-            return void(0);
+        case doctrine.Syntax.AllLiteral:
+            return null;
 
-        case 'NullLiteral':
+        case doctrine.Syntax.NullLiteral:
             return 'null';
 
-        case 'UndefinedLiteral':
+        case doctrine.Syntax.UndefinedLiteral:
             return 'undefined';
 
-        case 'NameExpression':
+        case doctrine.Syntax.NameExpression:
             return normalizeConstructorName(type.name);
 
-        case 'UnionType':
+        case doctrine.Syntax.UnionType:
             return type.elements.map(normalizeTypes);
 
-        case 'TypeApplication':
+        case doctrine.Syntax.TypeApplication:
             return {
                 root: normalizeConstructorName(type.expression.name),
                 children: type.applications.map(normalizeTypes)
             };
 
-        case 'OptionalType':
+        case doctrine.Syntax.OptionalType:
             return {
                 parameter: normalizeTypes(type.expression),
                 optional: true
             };
 
-        case 'RecordType':
+        case doctrine.Syntax.RecordType:
             return {
                 record: normalizeConstructorName('Object'),
                 fields: type.fields.reduce((map, fieldType) => {
@@ -70,15 +70,15 @@ function normalizeTypes(type) {
                 }, {})
             };
 
-        case 'FieldType':
+        case doctrine.Syntax.FieldType:
             return normalizeTypes(type.value);
 
-        case 'NonNullableType':
-        case 'NullableType':
+        case doctrine.Syntax.NonNullableType:
+        case doctrine.Syntax.NullableType:
             return normalizeTypes(type.expression);
 
         default:
-            throw new Error('can\'t parse type ' + type.toString());
+            throw new Error('Can\'t parse type ' + type.toString());
     }
 }
 

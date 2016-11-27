@@ -45,19 +45,23 @@ module.exports = (functionName, functionTemplate, functionPath, jsDoc, useStrict
 
             if (path.isAssignmentPattern()) {
                 node = node.left;
-            } else if (path.isRestElement()) {
+            } else
+            if (path.isRestElement()) {
                 node = node.argument;
-            } else if (path.isObjectProperty()) {
+            } else
+            if (path.isObjectProperty()) {
                 shouldThrowException = false;
                 count += iterateThroughArrayOfNodes(
                     [path.get('value')]
                 );
-            } else if (path.isObjectPattern()) {
+            } else
+            if (path.isObjectPattern()) {
                 shouldThrowException = false;
                 count += iterateThroughArrayOfNodes(
                     path.get('properties')
                 );
-            } else if (path.isArrayPattern()) {
+            } else
+            if (path.isArrayPattern()) {
                 shouldThrowException = false;
                 count += iterateThroughArrayOfNodes(
                     path.get('elements')
@@ -67,7 +71,7 @@ module.exports = (functionName, functionTemplate, functionPath, jsDoc, useStrict
             name = node.name;
             type = parameters[name];
 
-            if (!type) {
+            if (!(name in parameters) || type === void(0)) {
                 if (useStrict && shouldThrowException) {
                     strictMode.throwException(path, strictMode.ERROR.NO_ARGUMENT_IN_JSDOC);
                 }
@@ -75,7 +79,11 @@ module.exports = (functionName, functionTemplate, functionPath, jsDoc, useStrict
                 continue;
             }
 
-            count++;
+            ++count;
+
+            if (!type) {
+                continue;
+            }
 
             functionBody.unshiftContainer(
                 'body',

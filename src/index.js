@@ -50,7 +50,7 @@ module.exports = function ({types: t}) {
     return {
         visitor: Object.assign(
             basicStateControlVisitor,
-            functionVisitorsFactory(typecheckFunctionCall, t, globalState)
+            functionVisitorsFactory(typecheckFunctionCall, globalState, t)
         )
     };
 };
