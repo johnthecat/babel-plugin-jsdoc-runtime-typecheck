@@ -2,7 +2,7 @@ const path = require('path');
 const fs = require('fs');
 
 const config = require('../config.json');
-const compare = require('./compare');
+const compare = require('../helpers/compare');
 
 const SOURCE_DIRECTORY = path.join(config.path.data, '/directive-parsing/src');
 const EXPECTED_DIRECTORY = path.join(config.path.data, '/directive-parsing/expected');
@@ -16,7 +16,7 @@ function read(file) {
     return {
         fileSource,
         fileExpected
-    }
+    };
 }
 
 describe('Directive parsing', function () {

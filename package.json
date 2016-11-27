@@ -14,10 +14,11 @@
   },
   "main": "dist/index.js",
   "scripts": {
-    "eslint": "eslint -c .eslintrc src/",
-    "build": "npm run eslint && babel src --out-dir dist",
+    "eslint-src": "eslint -c .eslintrc src/",
+    "eslint-test": "eslint --ignore-path test/.eslintignore -c test/.eslintrc test/",
+    "build": "npm run eslint-src && babel src --out-dir dist",
     "watch": "babel src --watch --out-dir dist",
-    "test": "node test"
+    "test": "npm run eslint-test && node test"
   },
   "pre-commit": [
     "test",
