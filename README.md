@@ -139,7 +139,7 @@ function test(a, b, c) {
 ```
 Result in console:
 ```bash
-SyntaxError: input.js: [TYPECHECK STRICT MODE]: This argument isn't covered by jsDoc comment, please, provide more info.
+SyntaxError: input.js: [TYPECHECK STRICT MODE]: Function argument type annotation missing.
    5 |  * @typecheck
    6 |  */
 >  7 | function test(a, b, c) {
