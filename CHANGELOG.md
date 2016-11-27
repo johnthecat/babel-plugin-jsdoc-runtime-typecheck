@@ -10,6 +10,7 @@
 ### Bugfix
 * Fixed a lot of cases of wrong parsing of arguments and return.
 * Fixed bug, when assertion doesn't adds to empty return.
+* Fixed crashes on empty files with directive.
 
 ### Other
 * Global refactoring - better code style, easy to read.

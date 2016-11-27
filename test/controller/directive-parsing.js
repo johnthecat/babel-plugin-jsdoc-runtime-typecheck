@@ -27,6 +27,12 @@ describe('Directive parsing', function () {
             compare(files.fileSource, files.fileExpected);
         });
 
+        it('doesn\'t transform code with global directive and without jsDoc', () => {
+            let files = read('defaults-global-directive-before-function.js');
+
+            compare(files.fileSource, files.fileExpected);
+        });
+
         it('transform code when directive in function', () => {
             let files = read('defaults-directive-in-function.js');
 

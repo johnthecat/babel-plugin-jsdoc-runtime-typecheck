@@ -1,5 +1,8 @@
 const config = require('../../config.json');
 
+const DEFAULT_COMMENT_TOP_PADDING = -1;
+const ALLOWED_COMMENT_TYPE = 'CommentBlock';
+
 /**
  * @param {PluginPass} state
  * @returns {String|Boolean}
@@ -34,7 +37,13 @@ module.exports = (path, state, hasGlobalDirective) => {
     let directive = getDirective(state);
 
     let previousNode = path.key !== 0 ? path.getSibling(path.key - 1) : null;
-    let previousNodeEnd = previousNode && previousNode.node ? previousNode.node.end || -1 : -1;
+    let previousNodeEnd;
+
+    if (previousNode && previousNode.node) {
+        previousNodeEnd = previousNode.node.end || DEFAULT_COMMENT_TOP_PADDING;
+    } else {
+        previousNodeEnd = DEFAULT_COMMENT_TOP_PADDING;
+    }
 
     let functionDeclarationStart;
 
@@ -49,6 +58,7 @@ module.exports = (path, state, hasGlobalDirective) => {
     }
 
     let foundedCommentsCollection = comments.filter((comment) => (
+        comment.type === ALLOWED_COMMENT_TYPE &&
         comment.start > previousNodeEnd &&
         comment.end < functionDeclarationStart
     ));
