@@ -75,6 +75,9 @@ function __TYPECHECKFUNCTION__(functionName, parameterName, parameter, validator
         var isValid;
 
         switch (type) {
+            case void(0):
+                return false;
+
             case 'null':
                 return parameter === null;
 

@@ -62,7 +62,6 @@ module.exports = (typecheckFunctionCall, globalState, t) => {
             functionName: functionName
         });
 
-
         globalState.shouldInjectHelperFunction = true;
     }
 

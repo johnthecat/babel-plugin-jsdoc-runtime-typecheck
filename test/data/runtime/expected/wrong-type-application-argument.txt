@@ -1,0 +1,1 @@
+'TypeError: Parameter "arr" in function "test" has wrong type. It\'s "Array<*>" now, but must have {Array<Number>} type.'
