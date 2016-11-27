@@ -78,7 +78,7 @@ function normalizeTypes(type) {
             return normalizeTypes(type.expression);
 
         default:
-            throw new Error('Can\'t parse type ' + type.toString());
+            return void(0);
     }
 }
 
