@@ -16,18 +16,20 @@ const BABEL_CONFIG = {
 describe('Runtime check', function () {
     let sandbox = new Sandbox();
 
-    fs.readdirSync(SOURCE_DIRECTORY).forEach((filename) => {
-        it(`correctly throws error in '${filename}'`, (done) => {
-            let expectedFile = filename.replace('.js', '.txt');
+    describe('correctly throws error', () => {
+        fs.readdirSync(SOURCE_DIRECTORY).forEach((filename) => {
+            it(`in '${filename}'`, (done) => {
+                let expectedFile = filename.replace('.js', '.txt');
 
-            let fileSource = fs.readFileSync(path.join(SOURCE_DIRECTORY, filename), FILE_ENCODING);
-            let fileExpected = fs.readFileSync(path.join(EXPECTED_DIRECTORY, expectedFile), FILE_ENCODING);
+                let fileSource = fs.readFileSync(path.join(SOURCE_DIRECTORY, filename), FILE_ENCODING);
+                let fileExpected = fs.readFileSync(path.join(EXPECTED_DIRECTORY, expectedFile), FILE_ENCODING);
 
-            let transformedSource = babel.transform(fileSource, BABEL_CONFIG);
+                let transformedSource = babel.transform(fileSource, BABEL_CONFIG);
 
-            sandbox.run(transformedSource.code, (output) => {
-                chai.expect(output.result.trim()).not.differentFrom(fileExpected.trim());
-                done();
+                sandbox.run(transformedSource.code, (output) => {
+                    chai.expect(output.result.trim()).not.differentFrom(fileExpected.trim());
+                    done();
+                });
             });
         });
     });

@@ -1,0 +1,1 @@
+'TypeError: Parameter "obj" in function "test" has wrong type. It\'s "Object<*>" now, but must have {Object<Number>} type.'

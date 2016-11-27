@@ -9,13 +9,15 @@ const EXPECTED_DIRECTORY = path.join(config.path.data, 'assertion-inject', 'expe
 
 const FILE_ENCODING = 'utf8';
 
-describe('Assertion inject', function () {
-    fs.readdirSync(SOURCE_DIRECTORY).forEach((filename) => {
-        it(`correctly adds assertions in '${filename}'`, () => {
-            let fileSource = fs.readFileSync(path.join(SOURCE_DIRECTORY, filename), FILE_ENCODING);
-            let fileExpected = fs.readFileSync(path.join(EXPECTED_DIRECTORY, filename), FILE_ENCODING);
+describe('Assertion inject', () => {
+    describe('correctly adds assertions', () => {
+        fs.readdirSync(SOURCE_DIRECTORY).forEach((filename) => {
+            it(`in '${filename}'`, () => {
+                let fileSource = fs.readFileSync(path.join(SOURCE_DIRECTORY, filename), FILE_ENCODING);
+                let fileExpected = fs.readFileSync(path.join(EXPECTED_DIRECTORY, filename), FILE_ENCODING);
 
-            compare(fileSource, fileExpected);
+                compare(fileSource, fileExpected);
+            });
         });
     });
 });
