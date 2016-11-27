@@ -18,7 +18,7 @@ module.exports = (functionName, functionTemplate, functionPath, jsDoc, useStrict
         return;
     }
 
-    let countOfInsertedArguments = iterateThroughArrayOfNodes(functionParameters);
+    let countOfInsertedArguments = insertAssertionBasedOn(functionParameters);
 
     if (useStrict) {
         let parametersKeys = Object.keys(parameters);
@@ -32,7 +32,7 @@ module.exports = (functionName, functionTemplate, functionPath, jsDoc, useStrict
      * @param {Array<NodePath>} nodes
      * @returns {Number}
      */
-    function iterateThroughArrayOfNodes(nodes) {
+    function insertAssertionBasedOn(nodes) {
         let shouldThrowException = true;
         let count = 0;
         let path, node, name;
@@ -51,19 +51,19 @@ module.exports = (functionName, functionTemplate, functionPath, jsDoc, useStrict
             } else
             if (path.isObjectProperty()) {
                 shouldThrowException = false;
-                count += iterateThroughArrayOfNodes(
+                count += insertAssertionBasedOn(
                     [path.get('value')]
                 );
             } else
             if (path.isObjectPattern()) {
                 shouldThrowException = false;
-                count += iterateThroughArrayOfNodes(
+                count += insertAssertionBasedOn(
                     path.get('properties')
                 );
             } else
             if (path.isArrayPattern()) {
                 shouldThrowException = false;
-                count += iterateThroughArrayOfNodes(
+                count += insertAssertionBasedOn(
                     path.get('elements')
                 );
             }

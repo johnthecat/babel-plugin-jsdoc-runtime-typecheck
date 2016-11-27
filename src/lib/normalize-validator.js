@@ -10,7 +10,8 @@ module.exports = (path, type, t) => {
     let validator;
 
     if (
-        typeof type === 'string' && !DEFAULT_TYPES.includes(type) &&
+        typeof type === 'string' &&
+       !DEFAULT_TYPES.includes(type) &&
         path.scope.hasBinding(type)
     ) {
         validator = t.identifier(type);
