@@ -89,7 +89,7 @@ By default, plugin will only parse docs with special directive `@typecheck`, you
             {
                 //useDirective: 'typecheck' - this is default
                 //useDirective: false - if you want to check all functions with jsDoc (useful for new projects)
-                useDirective: 'makeMeHappy' - your custom directive,
+                useDirective: 'makeMeHappy' - your custom directive
             }
         ]
     ]
@@ -211,6 +211,15 @@ let myObject = {
      */
     myMethod(a) {
         return a;
+    },
+    
+    /**
+     * @param {Number} a
+     * @returns {Number}
+     * Will use object field name as function name ("myField" here)
+     */
+    myField: function(a) {
+        return a;
     }
 }
 ```
@@ -245,8 +254,15 @@ class MyClass {
     /**
      * @param {Number} a
      */
-    set mySetterMethod(a) {
-       return this._a = a;
+    set a(a) {
+        this._a = a;
+    }
+    
+    /**
+     * @returns {Number} a
+     */
+    get a() {
+       return this._a;
     }
 }
 ```

@@ -1,5 +1,22 @@
 const config = require('../../config.json');
 
+const ALLOWED_NODE_TYPE = 'CallExpression';
+
+/**
+ * @param {NodePath} path
+ * @returns {Boolean}
+ */
+function findInsertedExpression(path) {
+    if (!path.isExpressionStatement()) {
+        return false;
+    }
+
+    return (
+        path.node.expression.type === ALLOWED_NODE_TYPE &&
+        path.node.expression.callee.name === config.functionName
+    );
+}
+
 /**
  * @param {NodePath} path
  * @returns {Boolean}
@@ -10,19 +27,5 @@ module.exports = (path) => {
      */
     let innerPaths = path.get('body').get('body');
 
-    /**
-     * @type {Array<NodePath>}
-     */
-    let expressions = innerPaths.filter((innerPath) => {
-        if (!innerPath.isExpressionStatement()) {
-            return false;
-        }
-
-        return (
-            innerPath.node.expression.type === 'CallExpression' &&
-            innerPath.node.expression.callee.name === config.functionName
-        );
-    });
-
-    return expressions.length === 0;
+    return innerPaths.filter(findInsertedExpression).length === 0;
 };

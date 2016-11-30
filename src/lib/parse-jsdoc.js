@@ -82,6 +82,18 @@ function normalizeTypes(type) {
     }
 }
 
+function findNameTag(tag) {
+    return tag.title === 'name';
+}
+
+function findParameterTag(tag) {
+    return tag.title === 'param';
+}
+
+function findReturnTag(tag) {
+    return tag.title === 'return' || tag.title === 'returns';
+}
+
 /**
  * @param {String} comment - comment with jsDoc
  * @returns {{parameters: Object, returnStatement: Object, name: String}|null}
@@ -97,9 +109,9 @@ module.exports = (comment) => {
     }
 
     let tags = commentAst.tags;
-    let nameDescription = tags.find((tag) => tag.title === 'name');
-    let paramsDescriptions = tags.filter((tag) => tag.title === 'param');
-    let returnDescription = tags.find((tag) => tag.title === 'return' || tag.title === 'returns');
+    let nameDescription = tags.find(findNameTag);
+    let paramsDescriptions = tags.filter(findParameterTag);
+    let returnDescription = tags.find(findReturnTag);
 
     let parameters = Object.create(null);
     let parameter;

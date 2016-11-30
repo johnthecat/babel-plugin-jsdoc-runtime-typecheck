@@ -1,5 +1,6 @@
 /**
  * CAUTION! This file must be written in ES5 syntax, because it will be included in final client code.
+ * It also shouldn't be transformed via babel, because es2015 preset will add helpers, that breaks code.
  * TODO add documentation
  */
 
@@ -12,21 +13,21 @@ var babelTemplate = require('babel-template');
  * @param {String} validatorSource
  * @returns {*} parameter
  */
-function __TYPECHECKFUNCTION__(functionName, parameterName, parameter, validatorSource) {
+function __TYPECHECK_HELPER_FUNCTION__(functionName, parameterName, parameter, validatorSource) {
     var isRootValid = false;
     var invalidType = null;
     var valid = false;
 
-    if (typeof validatorSource !== 'string') {
+    if (typeof validatorSource === 'string') {
+        var validator = JSON.parse(validatorSource);
+
+        valid = validateByType(parameter, validator);
+    } else {
         if (typeof validator === 'function') {
             valid = parameter instanceof validatorSource;
         } else {
             valid = parameter === validator;
         }
-    } else {
-        var validator = JSON.parse(validatorSource);
-
-        valid = validateByType(parameter, validator);
     }
 
     if (!valid) {
@@ -41,6 +42,7 @@ function __TYPECHECKFUNCTION__(functionName, parameterName, parameter, validator
 
     return parameter;
 
+    // HELPERS
 
     function makeTypeReadable(validator, dontWrap) {
         let typeDeclaration;
@@ -55,7 +57,7 @@ function __TYPECHECKFUNCTION__(functionName, parameterName, parameter, validator
 
         if (typeof validator === 'object') {
             if ('root' in validator) {
-                typeDeclaration = validator.root + '<' + makeTypeReadable(validator.children, true) + '>'
+                typeDeclaration = validator.root + '<' + makeTypeReadable(validator.children, true) + '>';
             }
 
             if ('record' in validator) {
@@ -63,7 +65,7 @@ function __TYPECHECKFUNCTION__(functionName, parameterName, parameter, validator
             }
 
             if ('optional' in validator) {
-                typeDeclaration = makeTypeReadable(validator.parameter, true) + '='
+                typeDeclaration = makeTypeReadable(validator.parameter, true) + '=';
             }
         }
 
@@ -73,6 +75,7 @@ function __TYPECHECKFUNCTION__(functionName, parameterName, parameter, validator
 
     function validateByType(parameter, type) {
         var isValid;
+        var field;
 
         switch (type) {
             case void(0):
@@ -97,7 +100,7 @@ function __TYPECHECKFUNCTION__(functionName, parameterName, parameter, validator
 
         if (Array.isArray(type)) {
             return type.some(function (innerType) {
-                return validateByType(parameter, innerType)
+                return validateByType(parameter, innerType);
             });
         }
 
@@ -112,7 +115,7 @@ function __TYPECHECKFUNCTION__(functionName, parameterName, parameter, validator
                 var isChildrenValid = true;
                 var isThisChildrenValid;
 
-                for (var field in parameter) {
+                for (field in parameter) {
                     if (!parameter.hasOwnProperty(field)) continue;
 
                     isThisChildrenValid = type.children.some(function (childType) {
@@ -146,7 +149,7 @@ function __TYPECHECKFUNCTION__(functionName, parameterName, parameter, validator
                 var isRecordValid = true;
                 var isThisRecordValid;
 
-                for (var field in parameter) {
+                for (field in parameter) {
                     if (!parameter.hasOwnProperty(field)) continue;
 
                     isThisRecordValid = validateByType(parameter[field], type.fields[field]);
@@ -184,5 +187,5 @@ function __TYPECHECKFUNCTION__(functionName, parameterName, parameter, validator
  * @param {String} name
  */
 module.exports = function (name) {
-    return babelTemplate(__TYPECHECKFUNCTION__.toString().replace('__TYPECHECKFUNCTION__', name));
+    return babelTemplate(__TYPECHECK_HELPER_FUNCTION__.toString().replace('__TYPECHECK_HELPER_FUNCTION__', name));
 };
