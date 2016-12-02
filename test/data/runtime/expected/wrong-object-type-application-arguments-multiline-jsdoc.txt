@@ -1,0 +1,1 @@
+'TypeError: Parameter "data" in function "test" has wrong type. It\'s "{"a":1,"c":"2"}" now, but must have {{"a":"Number","b":"Number"}} type.'
