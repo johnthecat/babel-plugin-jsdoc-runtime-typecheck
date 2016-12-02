@@ -115,12 +115,36 @@ module.exports = (comment) => {
 
     let parameters = Object.create(null);
     let parameter;
+    let parameterName;
+    let parameterRoot;
+    let parameterField;
 
     for (let index = 0, count = paramsDescriptions.length; index < count; index++) {
         parameter = paramsDescriptions[index];
+        parameterName = parameter.name.split('.');
 
-        parameters[parameter.name] = normalizeTypes(parameter.type);
+        if (parameterName.length === 1) {
+            parameters[parameter.name] = normalizeTypes(parameter.type);
+            continue;
+        }
+
+        parameterRoot = parameterName[0];
+        parameterField = parameterName[1];
+
+        if (typeof parameters[parameterRoot] === 'object') {
+            parameters[parameterRoot].fields[parameterField] = normalizeTypes(parameter.type);
+        } else {
+            parameters[parameterRoot] = {
+                record: parameters[parameterRoot],
+                fields: {
+                    [parameterField]: normalizeTypes(parameter.type)
+                }
+            };
+        }
     }
+
+    // global.console.log(parameters);
+    // process.exit(0);
 
     let returnStatement;
 
