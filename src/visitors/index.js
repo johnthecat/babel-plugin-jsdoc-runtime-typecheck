@@ -1,7 +1,7 @@
 const config = require('../../config.json');
 
 const findComment = require('../lib/find-comment');
-const checkFunction = require('../lib/check-function');
+const canInjectIntoFunction = require('../lib/check-function');
 const parseJsDoc = require('../lib/parse-jsdoc');
 const normalizeFunctionBody = require('../lib/normalize-function-body');
 const insertParametersCheck = require('../lib/insert-parameters-check');
@@ -42,27 +42,23 @@ module.exports = (typecheckFunctionCall, globalState, t) => {
     function executeFunctionTransformation(comment, path, name) {
         let jsDoc = parseJsDoc(comment);
 
-        if (!jsDoc) {
-            return;
-        }
+        if (!jsDoc) return;
 
         let functionName = name || jsDoc.name || (path.node.id ? path.node.id.name : config.defaultFunctionName);
 
         normalizeFunctionBody(path);
 
-        if (!checkFunction(path)) {
-            return;
+        if (canInjectIntoFunction(path)) {
+            insertParametersCheck(functionName, typecheckFunctionCall, path, jsDoc, globalState.useStrict, t);
+
+            path.traverse(returnTypecheckVisitor, {
+                jsDoc: jsDoc,
+                functionPath: path,
+                functionName: functionName
+            });
+
+            globalState.shouldInjectHelperFunction = true;
         }
-
-        insertParametersCheck(functionName, typecheckFunctionCall, path, jsDoc, globalState.useStrict, t);
-
-        path.traverse(returnTypecheckVisitor, {
-            jsDoc: jsDoc,
-            functionPath: path,
-            functionName: functionName
-        });
-
-        globalState.shouldInjectHelperFunction = true;
     }
 
     return {
@@ -73,16 +69,12 @@ module.exports = (typecheckFunctionCall, globalState, t) => {
         VariableDeclaration(path, state) {
             let comment = findComment(path, state, globalState.hasGlobalDirective);
 
-            if (!comment) {
-                return;
-            }
+            if (!comment) return;
 
             let declarations = path.get('declarations');
             let functionDeclaration = declarations.find(helpers.isDeclarationIsFunction);
 
-            if (!functionDeclaration) {
-                return;
-            }
+            if (!functionDeclaration) return;
 
             executeFunctionTransformation(comment, functionDeclaration.get('init'));
         },
@@ -94,15 +86,11 @@ module.exports = (typecheckFunctionCall, globalState, t) => {
         ReturnStatement(path, state) {
             let argument = path.get('argument');
 
-            if (!argument || !argument.isFunction()) {
-                return;
-            }
+            if (!argument || !argument.isFunction()) return;
 
             let comment = findComment(path, state, globalState.hasGlobalDirective);
 
-            if (!comment) {
-                return;
-            }
+            if (!comment) return;
 
             executeFunctionTransformation(comment, argument);
         },
@@ -114,16 +102,12 @@ module.exports = (typecheckFunctionCall, globalState, t) => {
         AssignmentExpression(path, state) {
             let rightPath = path.get('right');
 
-            if (!rightPath.isFunction()) {
-                return;
-            }
+            if (!rightPath.isFunction()) return;
 
             let expression = path.find(helpers.isPathIsExpression);
             let comment = findComment(expression, state, globalState.hasGlobalDirective);
 
-            if (!comment) {
-                return;
-            }
+            if (!comment) return;
 
             executeFunctionTransformation(comment, rightPath);
         },
@@ -135,15 +119,11 @@ module.exports = (typecheckFunctionCall, globalState, t) => {
         ObjectProperty(path, state) {
             let value = path.get('value');
 
-            if (!value.isFunction()) {
-                return;
-            }
+            if (!value.isFunction()) return;
 
             let comment = findComment(path, state, globalState.hasGlobalDirective);
 
-            if (!comment) {
-                return;
-            }
+            if (!comment) return;
 
             executeFunctionTransformation(comment, value, path.node.key.name);
         },
@@ -155,9 +135,7 @@ module.exports = (typecheckFunctionCall, globalState, t) => {
         ClassMethod(path, state) {
             let comment = findComment(path, state, globalState.hasGlobalDirective);
 
-            if (!comment) {
-                return;
-            }
+            if (!comment) return;
 
             let classDeclaration = path.find(helpers.isPathIsClassDeclaration);
             let className = classDeclaration.node.id.name;
@@ -168,7 +146,6 @@ module.exports = (typecheckFunctionCall, globalState, t) => {
                 comment, path,
                 `${node.static ? 'static ' : ''}${kind}${className}.${node.key.name}`
             );
-
         },
 
         /**
@@ -178,9 +155,7 @@ module.exports = (typecheckFunctionCall, globalState, t) => {
         ObjectMethod(path, state) {
             let comment = findComment(path, state, globalState.hasGlobalDirective);
 
-            if (!comment) {
-                return;
-            }
+            if (!comment) return;
 
             executeFunctionTransformation(comment, path, path.node.key.name);
         },
@@ -192,9 +167,7 @@ module.exports = (typecheckFunctionCall, globalState, t) => {
         'FunctionDeclaration|ArrowFunctionExpression'(path, state) {
             let comment = findComment(path, state, globalState.hasGlobalDirective);
 
-            if (!comment) {
-                return;
-            }
+            if (!comment) return;
 
             executeFunctionTransformation(comment, path);
         }

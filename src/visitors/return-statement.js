@@ -49,5 +49,4 @@ module.exports = (typecheckFunctionCall, globalState, t) => {
             path.skip();
         }
     };
-
 };

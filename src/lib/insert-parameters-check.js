@@ -14,9 +14,7 @@ module.exports = (functionName, functionTemplate, functionPath, jsDoc, useStrict
     let functionParameters = functionPath.get('params');
     let functionBody = functionPath.get('body');
 
-    if (!functionBody.isBlockStatement()) {
-        return;
-    }
+    if (!functionBody.isBlockStatement()) return;
 
     let countOfInsertedArguments = insertAssertionBasedOn(functionParameters);
 

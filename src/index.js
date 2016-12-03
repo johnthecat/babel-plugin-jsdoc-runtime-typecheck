@@ -17,7 +17,6 @@
 const config = require('../config.json');
 const typecheckTemplate = require('./lib/typecheck-function-template');
 const findGlobalDirective = require('./lib/find-global-directive');
-
 const functionVisitorsFactory = require('./visitors');
 
 

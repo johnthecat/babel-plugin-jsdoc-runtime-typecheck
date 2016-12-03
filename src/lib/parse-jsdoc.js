@@ -1,6 +1,7 @@
 const config = require('../../config.json');
 const doctrine = require('doctrine');
 
+const NESTED_PARAMETER_SEPARATOR = '.';
 const WRONG_TYPES = {
     'object': 'Object',
     'array': 'Array',
@@ -121,7 +122,7 @@ module.exports = (comment) => {
 
     for (let index = 0, count = paramsDescriptions.length; index < count; index++) {
         parameter = paramsDescriptions[index];
-        parameterName = parameter.name.split('.');
+        parameterName = parameter.name.split(NESTED_PARAMETER_SEPARATOR);
 
         if (parameterName.length === 1) {
             parameters[parameter.name] = normalizeTypes(parameter.type);
@@ -131,7 +132,7 @@ module.exports = (comment) => {
         parameterRoot = parameterName[0];
         parameterField = parameterName[1];
 
-        if (typeof parameters[parameterRoot] === 'object') {
+        if (typeof parameters[parameterRoot] === 'object' && 'fields' in parameters[parameterRoot]) {
             parameters[parameterRoot].fields[parameterField] = normalizeTypes(parameter.type);
         } else {
             parameters[parameterRoot] = {
@@ -142,9 +143,6 @@ module.exports = (comment) => {
             };
         }
     }
-
-    // global.console.log(parameters);
-    // process.exit(0);
 
     let returnStatement;
 
