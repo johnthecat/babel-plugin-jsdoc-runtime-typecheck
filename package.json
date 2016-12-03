@@ -18,11 +18,11 @@
     "eslint-test": "eslint --ignore-path test/.eslintignore -c test/.eslintrc test/",
     "build": "npm run eslint-src && babel src --out-dir dist",
     "watch": "babel src --watch --out-dir dist",
-    "test": "npm run eslint-test && node test"
+    "test": "npm run eslint-test && node test",
+    "ci-build": "npm run test && npm run build"
   },
   "pre-commit": [
-    "test",
-    "build"
+    "ci-build"
   ],
   "devDependencies": {
     "babel-cli": "^6.18.0",
