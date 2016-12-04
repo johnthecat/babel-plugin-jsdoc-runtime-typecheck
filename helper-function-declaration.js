@@ -73,6 +73,19 @@ function __TYPECHECK_HELPER_FUNCTION__(functionName, parameterName, parameter, v
     }
 
 
+    function instanceOf(instance, constructorName) {
+        while (instance !== null && instance !== void(0)) {
+            if (instance.constructor.name === constructorName) {
+                return true;
+            }
+
+            instance = Object.getPrototypeOf(instance);
+        }
+
+        return false;
+    }
+
+
     function validateByType(parameter, type) {
         var isValid;
         var field;
@@ -179,7 +192,7 @@ function __TYPECHECK_HELPER_FUNCTION__(functionName, parameterName, parameter, v
             return parameter instanceof this[type];
         }
 
-        return parameter.constructor.name === type;
+        return instanceOf(parameter, type);
     }
 }
 

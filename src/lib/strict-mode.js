@@ -17,6 +17,6 @@ module.exports.ERROR = {
  * @param {NodePath} path
  * @param {String} error
  */
-module.exports.throwException = function callError(path, error) {
+module.exports.throwException = (path, error) => {
     throw path.buildCodeFrameError(error);
 };

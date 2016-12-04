@@ -2,10 +2,10 @@ const path = require('path');
 const fs = require('fs');
 
 const config = require('../config.json');
-const compare = require('../helpers/compare');
+const compare = require('./helpers/compare');
 
-const SOURCE_DIRECTORY = path.join(config.path.data, 'directive-parsing', 'src');
-const EXPECTED_DIRECTORY = path.join(config.path.data, 'directive-parsing', 'expected');
+const SOURCE_DIRECTORY = path.join(config.path.smokeTestData, 'directive-parsing', 'src');
+const EXPECTED_DIRECTORY = path.join(config.path.smokeTestData, 'directive-parsing', 'expected');
 
 const FILE_ENCODING = 'utf8';
 
@@ -19,7 +19,7 @@ function read(file) {
     };
 }
 
-describe('Directive parsing', function () {
+describe('[SMOKE] Directive parsing', () => {
     describe('with default parameters', () => {
         it('doesn\'t transform code without directive', () => {
             let files = read('defaults-no-directive.js');

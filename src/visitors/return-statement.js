@@ -1,6 +1,8 @@
 const strictMode = require('../lib/strict-mode');
 const normalizeValidator = require('../lib/normalize-validator');
 
+const VALIDATOR_METHOD_NAME = 'return';
+
 /**
  * @param {Function} typecheckFunctionCall
  * @param {Object} globalState
@@ -10,6 +12,9 @@ const normalizeValidator = require('../lib/normalize-validator');
 module.exports = (typecheckFunctionCall, globalState, t) => {
     return {
         ReturnStatement(path) {
+            /**
+             * Check for valid function parent, prevents changing return statements in nested functions
+             */
             if (path.getFunctionParent().node !== this.functionPath.node) {
                 return;
             }
@@ -33,20 +38,18 @@ module.exports = (typecheckFunctionCall, globalState, t) => {
                 }
             }
 
-            if (!statement) {
-                return;
+            if (statement) {
+                let functionCall = typecheckFunctionCall(
+                    this.functionName,
+                    VALIDATOR_METHOD_NAME,
+                    argument.node || t.identifier('void(0)'),
+                    normalizeValidator(path, statement, t)
+                );
+
+                argument.replaceWith(functionCall.expression);
+
+                path.skip();
             }
-
-            let functionCall = typecheckFunctionCall(
-                this.functionName,
-                'return',
-                argument.node || t.identifier('void 0'),
-                normalizeValidator(path, statement, t)
-            );
-
-            argument.replaceWith(functionCall.expression);
-
-            path.skip();
         }
     };
 };

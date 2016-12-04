@@ -4,8 +4,8 @@ const babel = require('babel-core');
 
 const config = require('../config.json');
 
-const SOURCE_DIRECTORY_ERRORS = path.join(config.path.data, 'strict-mode', 'should-throw-exception');
-const SOURCE_DIRECTORY_NO_ERRORS = path.join(config.path.data, 'strict-mode', 'should-not-throw-exception');
+const SOURCE_DIRECTORY_ERRORS = path.join(config.path.smokeTestData, 'strict-mode', 'should-throw-exception');
+const SOURCE_DIRECTORY_NO_ERRORS = path.join(config.path.smokeTestData, 'strict-mode', 'should-not-throw-exception');
 const FILE_ENCODING = 'utf8';
 const EXCEPTION_NOT_THROWN = 'Cannot handle this case - exception not thrown!';
 const EXCEPTION_THROWN = 'Cannot handle this case - exception thrown!';
@@ -21,7 +21,7 @@ const BABEL_CONFIG = {
     ]
 };
 
-describe('Strict mode', function () {
+describe('[SMOKE] Strict mode', () => {
     describe('should throw exception', () => {
         fs.readdirSync(SOURCE_DIRECTORY_ERRORS).forEach((filename) => {
             it(`in '${filename}'`, () => {

@@ -8,20 +8,36 @@ const insertParametersCheck = require('../lib/insert-parameters-check');
 const returnStatementVisitorFactory = require('./return-statement');
 
 const helpers = {
-    isDeclarationIsFunction(declaration) {
-        return declaration.get('init').isFunction();
+    /**
+     * @param {NodePath} path
+     * @returns {Boolean}
+     */
+    declarationIsFunction(path) {
+        return path.get('init').isFunction();
     },
 
-    isPathIsConstructor(path) {
+    /**
+     * @param {NodePath} path
+     * @returns {Boolean}
+     */
+    pathIsConstructor(path) {
         return path.node.kind === 'constructor';
     },
 
-    isPathIsExpression(path) {
+    /**
+     * @param {NodePath} path
+     * @returns {Boolean}
+     */
+    pathIsExpression(path) {
         return path.isExpressionStatement();
     },
 
-    isPathIsClassDeclaration(parent) {
-        return parent.isClassDeclaration();
+    /**
+     * @param {NodePath} path
+     * @returns {Boolean}
+     */
+    pathIsClassDeclaration(path) {
+        return path.isClassDeclaration();
     }
 };
 
@@ -72,7 +88,7 @@ module.exports = (typecheckFunctionCall, globalState, t) => {
             if (!comment) return;
 
             let declarations = path.get('declarations');
-            let functionDeclaration = declarations.find(helpers.isDeclarationIsFunction);
+            let functionDeclaration = declarations.find(helpers.declarationIsFunction);
 
             if (!functionDeclaration) return;
 
@@ -104,7 +120,7 @@ module.exports = (typecheckFunctionCall, globalState, t) => {
 
             if (!rightPath.isFunction()) return;
 
-            let expression = path.find(helpers.isPathIsExpression);
+            let expression = path.find(helpers.pathIsExpression);
             let comment = findComment(expression, state, globalState.hasGlobalDirective);
 
             if (!comment) return;
@@ -137,7 +153,7 @@ module.exports = (typecheckFunctionCall, globalState, t) => {
 
             if (!comment) return;
 
-            let classDeclaration = path.find(helpers.isPathIsClassDeclaration);
+            let classDeclaration = path.find(helpers.pathIsClassDeclaration);
             let className = classDeclaration.node.id.name;
             let node = path.node;
             let kind = node.kind === 'constructor' ? '' : node.kind + ' ';

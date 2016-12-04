@@ -5,15 +5,15 @@ const config = require('../config.json');
 const babel = require('babel-core');
 const Sandbox = require('sandbox');
 
-const SOURCE_DIRECTORY = path.join(config.path.data, 'runtime', 'src');
-const EXPECTED_DIRECTORY = path.join(config.path.data, 'runtime', 'expected');
+const SOURCE_DIRECTORY = path.join(config.path.smokeTestData, 'runtime', 'src');
+const EXPECTED_DIRECTORY = path.join(config.path.smokeTestData, 'runtime', 'expected');
 const FILE_ENCODING = 'utf8';
 
 const BABEL_CONFIG = {
     plugins: [config.path.plugin]
 };
 
-describe('Runtime check', function () {
+describe('[SMOKE] Runtime check', () => {
     let sandbox = new Sandbox();
 
     describe('correctly throws error', () => {

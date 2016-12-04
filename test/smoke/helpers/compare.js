@@ -1,4 +1,4 @@
-const config = require('../config.json');
+const config = require('../../config.json');
 
 const chai = require('chai');
 const babel = require('babel-core');

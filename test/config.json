@@ -1,8 +1,10 @@
 {
   "path": {
     "testsInitialization": "./test/initialization.js",
-    "tests": "./test/controller/",
-    "data": "./test/data/",
+    "smokeTest": "./test/smoke",
+    "smokeTestData": "./test/smoke/data",
+    "unitTest": "./test/unit",
+    "unitTestData": "./test/unit/data",
     "plugin": "./src/index.js"
   }
 }

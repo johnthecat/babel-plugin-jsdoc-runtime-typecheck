@@ -5,9 +5,8 @@ const Mocha = require('mocha');
 
 let mocha = new Mocha();
 
-mocha.addFile(path.resolve(config.path.testsInitialization));
-
-addFilesFrom(mocha, config.path.tests);
+addFilesFrom(mocha, path.resolve(config.path.smokeTest));
+addFilesFrom(mocha, path.resolve(config.path.unitTest));
 
 mocha.run((failures) => {
     process.on('exit', () => {
