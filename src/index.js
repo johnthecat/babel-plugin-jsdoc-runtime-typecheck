@@ -14,6 +14,8 @@
  * 9. If some function were transformed by plugin, on exit of Program it adds type check function declaration to file.
  */
 
+require('core-js/fn/object/assign');
+
 const config = require('../config.json');
 const typecheckTemplate = require('./lib/typecheck-function-template');
 const findGlobalDirective = require('./lib/find-global-directive');
