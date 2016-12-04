@@ -10,5 +10,6 @@
     "recoverable": true
   },
   "functionName": "__executeTypecheck__",
-  "defaultFunctionName": "Anonymous function"
+  "defaultFunctionName": "Anonymous function",
+  "defaultClassName": "Anonymous class"
 }

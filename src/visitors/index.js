@@ -15,6 +15,13 @@ const helpers = {
     declarationIsFunction(path) {
         return path.get('init').isFunction();
     },
+    /**
+     * @param {NodePath} path
+     * @returns {Boolean}
+     */
+    declarationIsClassExpression(path) {
+        return path.get('init').isClassExpression();
+    },
 
     /**
      * @param {NodePath} path
@@ -38,6 +45,19 @@ const helpers = {
      */
     pathIsClassDeclaration(path) {
         return path.isClassDeclaration();
+    },
+
+    /**
+     * @param {NodePath} classMethod
+     * @param {NodePath} classExpression
+     * @return {String}
+     */
+    createClassMethodName(classMethod, classExpression) {
+        let node = classMethod.node;
+        let className = classExpression.node.id ? classExpression.node.id.name : config.defaultClassName;
+        let kind = node.kind === 'constructor' ? '' : node.kind + ' ';
+
+        return `${node.static ? 'static ' : ''}${kind}${className}.${node.key.name}`;
     }
 };
 
@@ -83,16 +103,40 @@ module.exports = (typecheckFunctionCall, globalState, t) => {
          * @param {PluginPass} state
          */
         VariableDeclaration(path, state) {
-            let comment = findComment(path, state, globalState.hasGlobalDirective);
-
-            if (!comment) return;
-
             let declarations = path.get('declarations');
             let functionDeclaration = declarations.find(helpers.declarationIsFunction);
 
-            if (!functionDeclaration) return;
+            if (functionDeclaration) {
+                let functionPath = functionDeclaration.get('init');
+                let comment = findComment(path, state, globalState.hasGlobalDirective);
 
-            executeFunctionTransformation(comment, functionDeclaration.get('init'));
+                if (comment) {
+                    executeFunctionTransformation(comment, functionPath);
+                }
+
+                return;
+            }
+
+            let classExpressionDeclaration = declarations.find(helpers.declarationIsClassExpression);
+
+            if (classExpressionDeclaration) {
+                let classExpression = classExpressionDeclaration.get('init');
+
+                classExpression.traverse({
+                    ClassMethod(classPath) {
+                        let comment = findComment(classPath, state, globalState.hasGlobalDirective);
+
+                        if (!comment) return;
+
+                        executeFunctionTransformation(
+                            comment, classPath,
+                            helpers.createClassMethodName(classPath, classExpression)
+                        );
+                    }
+                });
+
+                return;
+            }
         },
 
         /**
@@ -154,13 +198,12 @@ module.exports = (typecheckFunctionCall, globalState, t) => {
             if (!comment) return;
 
             let classDeclaration = path.find(helpers.pathIsClassDeclaration);
-            let className = classDeclaration.node.id.name;
-            let node = path.node;
-            let kind = node.kind === 'constructor' ? '' : node.kind + ' ';
+
+            if (!classDeclaration) return;
 
             executeFunctionTransformation(
                 comment, path,
-                `${node.static ? 'static ' : ''}${kind}${className}.${node.key.name}`
+                helpers.createClassMethodName(path, classDeclaration)
             );
         },
 

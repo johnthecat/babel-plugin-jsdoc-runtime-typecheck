@@ -21,12 +21,14 @@ function trimString(string) {
  * @param {String} fileExpected
  * @param {Object} [parameters]
  */
-module.exports = (fileSource, fileExpected, parameters) => {
+module.exports = (fileSource, fileExpected, parameters = {}) => {
+    parameters.presets = Array.isArray(parameters.presets) ? parameters.presets : [];
 
     chai.assert.notEqual(trimString(fileSource).length, 0, ERROR.EMPTY_SOURCE);
     chai.assert.notEqual(trimString(fileExpected).length, 0, ERROR.EMPTY_EXPECTED);
 
     let transformationResult = babel.transform(fileSource, {
+        presets: parameters.presets,
         plugins: [
             [config.path.plugin, Object.assign(DEFAULT_BABEL_PLUGIN_PARAMETER, parameters)]
         ]

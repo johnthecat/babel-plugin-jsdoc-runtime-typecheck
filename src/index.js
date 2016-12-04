@@ -1,6 +1,6 @@
 /**
  * How it works:
- * 1. It makes initialization - gets config, called template factories, sets flag to default state.
+ * 1. It makes initialization - gets config, called template factories, sets flags to default state.
  * 2. Plugin traverse in 3 ways:
  *      - basic function declarations (FunctionDeclaration, ArrowFunctionExpression, etc.)
  *      - variable declarations with declared function
@@ -10,8 +10,8 @@
  * 5. It makes function body normalization (removes "(a) => a * a" cases, makes it multiline)
  * 6. It inserts type check function call for arguments.
  * 7. It makes traverse for all return statements, relative to this function.
- * 8. It adds type check function call into return statement.
- * 9. If some function were transformed by plugin, on exit of Program it adds type check function declaration to file.
+ * 8. It adds typecheck function call into return statement.
+ * 9. If some function were transformed by plugin, on exit of Program it adds typecheck function declaration to file.
  */
 
 require('core-js/fn/object/assign');
