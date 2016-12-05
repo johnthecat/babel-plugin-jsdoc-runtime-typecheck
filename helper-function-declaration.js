@@ -200,5 +200,10 @@ function __TYPECHECK_HELPER_FUNCTION__(functionName, parameterName, parameter, v
  * @param {String} name
  */
 module.exports = function (name) {
-    return babelTemplate(__TYPECHECK_HELPER_FUNCTION__.toString().replace('__TYPECHECK_HELPER_FUNCTION__', name));
+    var template = __TYPECHECK_HELPER_FUNCTION__.toString().replace('__TYPECHECK_HELPER_FUNCTION__', name);
+    var ast = babelTemplate(template)();
+
+    return function() {
+        return ast;
+    };
 };

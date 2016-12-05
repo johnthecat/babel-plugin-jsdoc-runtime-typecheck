@@ -110,11 +110,13 @@ module.exports = (typecheckFunctionCall, globalState, t) => {
         if (canInjectIntoFunction(path)) {
             insertParametersCheck(functionName, typecheckFunctionCall, path, jsDoc, globalState.useStrict, t);
 
-            path.traverse(returnTypecheckVisitor, {
-                jsDoc: jsDoc,
-                functionPath: path,
-                functionName: functionName
-            });
+            if (jsDoc.returnStatement || globalState.useStrict) {
+                path.traverse(returnTypecheckVisitor, {
+                    jsDoc: jsDoc,
+                    functionPath: path,
+                    functionName: functionName
+                });
+            }
 
             globalState.shouldInjectHelperFunction = true;
         }
