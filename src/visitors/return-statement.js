@@ -33,7 +33,7 @@ module.exports = (typecheckFunctionCall, globalState, t) => {
                 /**
                  * Case: return in described in jsDoc, but real return statement in function is empty.
                  */
-                if (!argument.node && statement) {
+                if (statement && !argument.node) {
                     strictMode.throwException(path, strictMode.ERROR.EMPTY_RETURN_IN_FUNCTION);
                 }
             }
@@ -47,8 +47,6 @@ module.exports = (typecheckFunctionCall, globalState, t) => {
                 );
 
                 argument.replaceWith(functionCall.expression);
-
-                path.skip();
             }
         }
     };

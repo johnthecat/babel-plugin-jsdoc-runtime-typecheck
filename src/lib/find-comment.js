@@ -34,7 +34,6 @@ module.exports = (path, state, hasGlobalDirective) => {
     }
 
     let comments = node.leadingComments;
-    let directive = getDirective(state);
 
     let previousNode = path.key !== 0 ? path.getSibling(path.key - 1) : null;
     let previousNodeEnd;
@@ -52,22 +51,31 @@ module.exports = (path, state, hasGlobalDirective) => {
      * Workaround: find function body and get it's start index.
      */
     if (path.isObjectProperty()) {
-        functionDeclarationStart = node.start || path.get('value').get('body').node.start;
+        functionDeclarationStart = node.start || path.get('value.body').node.start;
     } else {
         functionDeclarationStart = node.start;
     }
 
-    let foundedCommentsCollection = comments.filter((comment) => (
-        comment.type === ALLOWED_COMMENT_TYPE &&
-        comment.start > previousNodeEnd &&
-        comment.end < functionDeclarationStart
-    ));
+    let foundedComment;
 
-    if (foundedCommentsCollection.length === 0) {
+    for (let index = comments.length - 1, comment; index >= 0; index--) {
+        comment = comments[index];
+
+        if (
+            comment.type === ALLOWED_COMMENT_TYPE &&
+            comment.start > previousNodeEnd &&
+            comment.end < functionDeclarationStart
+        ) {
+            foundedComment = comment;
+            break;
+        }
+    }
+
+    if (!foundedComment) {
         return null;
     }
 
-    let foundedComment = foundedCommentsCollection[foundedCommentsCollection.length - 1];
+    let directive = getDirective(state);
 
     if (typeof directive === 'string' && !hasGlobalDirective) {
         foundedComment = foundedComment.value.includes(`@${directive}`) ? foundedComment : null;

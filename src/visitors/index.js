@@ -9,18 +9,41 @@ const returnStatementVisitorFactory = require('./return-statement');
 
 const helpers = {
     /**
-     * @param {NodePath} path
-     * @returns {Boolean}
+     * @param {Array<NodePath>} declarations
+     * @returns {NodePath|null}
      */
-    declarationIsFunction(path) {
-        return path.get('init').isFunction();
+    declarationIsFunction(declarations) {
+        let functionNodeDescriptor = 'init';
+        let declaration;
+
+        for (let index = 0, count = declarations.length; index < count; index++) {
+            declaration = declarations[index].get(functionNodeDescriptor);
+
+            if (declaration.isFunction()) {
+                return declaration;
+            }
+        }
+
+        return null;
     },
+
     /**
-     * @param {NodePath} path
-     * @returns {Boolean}
+     * @param {Array<NodePath>} declarations
+     * @returns {NodePath|null}
      */
-    declarationIsClassExpression(path) {
-        return path.get('init').isClassExpression();
+    declarationIsClassExpression(declarations) {
+        let classNodeDescriptor = 'init';
+        let declaration;
+
+        for (let index = 0, count = declarations.length; index < count; index++) {
+            declaration = declarations[index].get(classNodeDescriptor);
+
+            if (declaration.isClassExpression()) {
+                return declaration;
+            }
+        }
+
+        return null;
     },
 
     /**
@@ -97,6 +120,25 @@ module.exports = (typecheckFunctionCall, globalState, t) => {
         }
     }
 
+    /**
+     * @param {NodePath} classDeclaration
+     * @param {PluginPass} state
+     */
+    function executeTraverseForNestedClass(classDeclaration, state) {
+        classDeclaration.traverse({
+            ClassMethod(classPath) {
+                let comment = findComment(classPath, state, globalState.hasGlobalDirective);
+
+                if (!comment) return;
+
+                executeFunctionTransformation(
+                    comment, classPath,
+                    helpers.createClassMethodName(classPath, classDeclaration)
+                );
+            }
+        });
+    }
+
     return {
         /**
          * @param {NodePath} path
@@ -104,38 +146,20 @@ module.exports = (typecheckFunctionCall, globalState, t) => {
          */
         VariableDeclaration(path, state) {
             let declarations = path.get('declarations');
-            let functionDeclaration = declarations.find(helpers.declarationIsFunction);
+            let functionDeclaration = helpers.declarationIsFunction(declarations);
 
             if (functionDeclaration) {
-                let functionPath = functionDeclaration.get('init');
                 let comment = findComment(path, state, globalState.hasGlobalDirective);
 
                 if (comment) {
-                    executeFunctionTransformation(comment, functionPath);
+                    executeFunctionTransformation(comment, functionDeclaration);
                 }
+            } else {
+                let classExpressionDeclaration = helpers.declarationIsClassExpression(declarations);
 
-                return;
-            }
-
-            let classExpressionDeclaration = declarations.find(helpers.declarationIsClassExpression);
-
-            if (classExpressionDeclaration) {
-                let classExpression = classExpressionDeclaration.get('init');
-
-                classExpression.traverse({
-                    ClassMethod(classPath) {
-                        let comment = findComment(classPath, state, globalState.hasGlobalDirective);
-
-                        if (!comment) return;
-
-                        executeFunctionTransformation(
-                            comment, classPath,
-                            helpers.createClassMethodName(classPath, classExpression)
-                        );
-                    }
-                });
-
-                return;
+                if (classExpressionDeclaration) {
+                    executeTraverseForNestedClass(classExpressionDeclaration, state);
+                }
             }
         },
 
