@@ -5,9 +5,10 @@ const config = require('../config.json');
 
 const parseJSDoc = require('../../src/lib/parse-jsdoc');
 
+const DATA_DIRECTORY = path.join(config.path.unitTestData, 'parse-jsdoc');
+const SOURCE_DIRECTORY = path.join(DATA_DIRECTORY, 'src');
+const EXPECTED_DIRECTORY = path.resolve(DATA_DIRECTORY, 'expected');
 
-const SOURCE_DIRECTORY = path.join(config.path.unitTestData, 'parse-jsdoc', 'src');
-const EXPECTED_DIRECTORY = path.resolve(config.path.unitTestData, 'parse-jsdoc', 'expected');
 const FILE_ENCODING = 'utf8';
 
 describe('[UNIT] Parse jsDoc', () => {
@@ -19,12 +20,7 @@ describe('[UNIT] Parse jsDoc', () => {
 
                 let parsingResult = parseJSDoc(fileSource);
 
-                try {
-                    chai.expect(parsingResult).to.deep.equal(expectedJSON);
-                } catch (error) {
-                    global.console.log(parsingResult);
-                    throw error;
-                }
+                chai.expect(parsingResult).to.deep.equal(expectedJSON);
             });
         });
     });

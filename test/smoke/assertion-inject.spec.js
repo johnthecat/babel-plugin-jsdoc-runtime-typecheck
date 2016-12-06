@@ -4,9 +4,10 @@ const fs = require('fs');
 const config = require('../config.json');
 const compare = require('./helpers/compare');
 
-const SOURCE_DIRECTORY = path.join(config.path.smokeTestData, 'assertion-inject', 'src');
-const EXPECTED_DIRECTORY = path.join(config.path.smokeTestData, 'assertion-inject', 'expected');
-const INTEGRATION_DIRECTORY = path.join(config.path.smokeTestData, 'assertion-inject', 'integration');
+const DATA_DIRECTORY = path.join(config.path.smokeTestData, 'assertion-inject');
+const SOURCE_DIRECTORY = path.join(DATA_DIRECTORY, 'src');
+const EXPECTED_DIRECTORY = path.join(DATA_DIRECTORY, 'expected');
+const INTEGRATION_DIRECTORY = path.join(DATA_DIRECTORY, 'integration');
 
 const FILE_ENCODING = 'utf8';
 

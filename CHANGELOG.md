@@ -1,5 +1,34 @@
 # Changelog
 
+## 1.1.1
+### Features
+* Added parsing for multiline Object definition:
+```javascript
+/**
+ * @param {Object} data
+ * @param {Number} data.id
+ * @param {String} data.name
+ * @param {Number} data.status
+ */
+
+//equals to 
+
+/**
+ * @param {{id: Number, name: String, status: Number}} data
+ */
+```
+    
+### Bugfix
+* Fixed integration problem with class method parsing after es2015 transformation.
+* Added polyfill for es2015 features, now it's fully compatible with Node < `6.0.0`.
+
+### Other
+* Added integration tests with es2015 preset.
+* Added a lot of smoke tests.
+* Increased performance.
+* Added Travis CI build on commit.
+
+
 ## 1.1.0
 
 ### Features

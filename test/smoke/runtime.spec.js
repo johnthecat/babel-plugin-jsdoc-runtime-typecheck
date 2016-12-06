@@ -5,8 +5,10 @@ const config = require('../config.json');
 const babel = require('babel-core');
 const Sandbox = require('sandbox');
 
-const SOURCE_DIRECTORY = path.join(config.path.smokeTestData, 'runtime', 'src');
-const EXPECTED_DIRECTORY = path.join(config.path.smokeTestData, 'runtime', 'expected');
+const DATA_DIRECTORY = path.join(config.path.smokeTestData, 'runtime');
+const SOURCE_DIRECTORY = path.join(DATA_DIRECTORY, 'src');
+const EXPECTED_DIRECTORY = path.join(DATA_DIRECTORY, 'expected');
+
 const FILE_ENCODING = 'utf8';
 
 const BABEL_CONFIG = {

@@ -4,8 +4,9 @@ const fs = require('fs');
 const config = require('../config.json');
 const compare = require('./helpers/compare');
 
-const SOURCE_DIRECTORY = path.join(config.path.smokeTestData, 'directive-parsing', 'src');
-const EXPECTED_DIRECTORY = path.join(config.path.smokeTestData, 'directive-parsing', 'expected');
+const DATA_DIRECTORY = path.join(config.path.smokeTestData, 'directive-parsing');
+const SOURCE_DIRECTORY = path.join(DATA_DIRECTORY, 'src');
+const EXPECTED_DIRECTORY = path.join(DATA_DIRECTORY, 'expected');
 
 const FILE_ENCODING = 'utf8';
 
