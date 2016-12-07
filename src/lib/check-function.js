@@ -4,6 +4,28 @@ const ALLOWED_NODE_TYPE = 'CallExpression';
 
 /**
  * @param {NodePath} path
+ * @return {Boolean}
+ */
+function traverseToReturnStatement(path) {
+    let found = false;
+
+    path.traverse({
+        ReturnStatement(returnPath) {
+            if (
+                returnPath.node.argument &&
+                returnPath.node.argument.type === ALLOWED_NODE_TYPE &&
+                returnPath.node.argument.callee.name === config.functionName
+            ) {
+                found = true;
+            }
+        }
+    });
+
+    return found;
+}
+
+/**
+ * @param {NodePath} path
  * @returns {Boolean}
  */
 function findInsertedExpression(path) {
@@ -21,6 +43,8 @@ function findInsertedExpression(path) {
             path.node.argument.callee.name === config.functionName
         );
     }
+
+    return traverseToReturnStatement(path);
 }
 
 /**
