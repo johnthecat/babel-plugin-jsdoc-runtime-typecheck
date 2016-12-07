@@ -26,14 +26,14 @@ module.exports = (typecheckFunctionCall, globalState, t) => {
                 /**
                  * Case: function doesn't return anything, but can stop self execution with return statement.
                  */
-                if (!statement && argument.node) {
+                if (statement === void(0) && argument.node) {
                     strictMode.throwException(path, strictMode.ERROR.NO_RETURN_IN_JSDOC);
                 }
 
                 /**
                  * Case: return in described in jsDoc, but real return statement in function is empty.
                  */
-                if (statement && !argument.node) {
+                if (statement !== void(0) && !argument.node) {
                     strictMode.throwException(path, strictMode.ERROR.EMPTY_RETURN_IN_FUNCTION);
                 }
             }
