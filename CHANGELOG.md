@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.2
+### Bugfix
+* Fixed adding double check to class method in some cases
+* Fixed exception on return with type "any" in strict mode
+
 ## 1.1.1
 ### Features
 * Added parsing for multiline Object definition:
