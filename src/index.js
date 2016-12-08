@@ -35,11 +35,20 @@ module.exports = function ({types: t}) {
     const globalState = Object.create(null);
     const basicStateControlVisitor = {
         Program: {
+            /**
+             * @param {NodePath} path
+             * @param {PluginPass} state
+             */
             enter(path, state) {
                 globalState.hasGlobalDirective = findGlobalDirective(path, state);
                 globalState.shouldInjectHelperFunction = false;
                 globalState.useStrict = state.opts.useStrict || config.default.useStrict;
             },
+
+            /**
+             * @param {NodePath} path
+             * @param {PluginPass} state
+             */
             exit(path, state) {
                 if (!globalState.shouldInjectHelperFunction || state.opts._insertHelper === false) {
                     return;

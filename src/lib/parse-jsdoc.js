@@ -115,7 +115,7 @@ module.exports = (comment) => {
     let paramsDescriptions = tags.filter(findParameterTag);
     let returnDescription = tags.find(findReturnTag);
 
-    let parameters = Object.create(null);
+    let parameters = {};
     let parameter;
     let parameterName;
     let parameterRoot;

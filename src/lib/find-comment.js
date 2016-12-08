@@ -1,17 +1,22 @@
+require('core-js/fn/string/includes');
+
 const config = require('../../config.json');
 
 const DEFAULT_COMMENT_TOP_PADDING = -1;
 const ALLOWED_COMMENT_TYPE = 'CommentBlock';
+const ALLOWED_DIRECTIVES = config.doctrineConfig.tags
+    .filter((tag) => tag !== 'name')
+    .map((tag) => `@${tag}`);
 
 /**
- * @param {PluginPass} state
+ * @param {Object} options
  * @returns {String|Boolean}
  */
-function getDirective(state) {
+function getDirective(options) {
     let directive;
 
-    if ('useDirective' in state.opts && state.opts.useDirective !== true) {
-        directive = state.opts.useDirective;
+    if ('useDirective' in options && options.useDirective !== true) {
+        directive = options.useDirective;
     } else {
         directive = config.default.useDirective;
     }
@@ -71,15 +76,24 @@ module.exports = (path, state, hasGlobalDirective) => {
         }
     }
 
-    if (!foundedComment) {
-        return null;
+    if (foundedComment) {
+        let directive = getDirective(state.opts);
+
+        if (typeof directive === 'string' && !hasGlobalDirective) {
+            foundedComment = foundedComment.value.includes(`@${directive}`) ? foundedComment : null;
+        }
+
+        if (foundedComment) {
+            let comment = foundedComment.value;
+
+
+            for (let index = 0, count = ALLOWED_DIRECTIVES.length; index < count; index++) {
+                if (comment.includes(ALLOWED_DIRECTIVES[index])) {
+                    return comment;
+                }
+            }
+        }
     }
 
-    let directive = getDirective(state);
-
-    if (typeof directive === 'string' && !hasGlobalDirective) {
-        foundedComment = foundedComment.value.includes(`@${directive}`) ? foundedComment : null;
-    }
-
-    return foundedComment ? foundedComment.value : null;
+    return null;
 };

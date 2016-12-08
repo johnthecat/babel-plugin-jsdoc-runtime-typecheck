@@ -1,1 +1,1 @@
-'TypeError: Parameter "record" in function "test" has wrong type. It\'s "{"a":1,"b":"2"}" now, but must have {{"a":"Number","b":"Number"}} type.'
+'TypeError: \n    Parameter "record" in function "test" has wrong type.\n    Expected: {"a":"Number","b":"Number"}\n    Current:  "{"a":1,"b":"2"}"\n'

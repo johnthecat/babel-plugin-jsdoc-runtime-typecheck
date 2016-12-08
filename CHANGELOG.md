@@ -1,5 +1,21 @@
 # Changelog
 
+## 1.1.4
+### Features
+* New error message
+```
+Uncaught TypeError:
+    Parameter "data" in function "myFunction" has wrong type.
+    Expected: {Object}
+    Current:  "[1, 2, 3]"
+```
+
+### Bugfix
+* Fixed constructor validation.
+* Fixed performance of comment searching.
+* Fixed performance of comment parsing.
+
+
 ## 1.1.2
 ### Bugfix
 * Fixed adding double check to class method in some cases

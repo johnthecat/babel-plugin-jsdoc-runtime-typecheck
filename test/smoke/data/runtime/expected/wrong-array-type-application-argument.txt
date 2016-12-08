@@ -1,1 +1,1 @@
-'TypeError: Parameter "arr" in function "test" has wrong type. It\'s "Array<*>" now, but must have {Array<Number>} type.'
+'TypeError: \n    Parameter "arr" in function "test" has wrong type.\n    Expected: Array<Number>\n    Current:  "[1,"2"]"\n'

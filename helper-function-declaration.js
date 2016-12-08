@@ -14,27 +14,34 @@ var babelTemplate = require('babel-template');
  * @returns {*} parameter
  */
 function __TYPECHECK_HELPER_FUNCTION__(functionName, parameterName, parameter, validatorSource) {
+    var ERROR_PADDING = '    ';
+
     var isRootValid = false;
     var invalidType = null;
     var valid = false;
+    var validator;
 
     if (typeof validatorSource === 'string') {
-        var validator = JSON.parse(validatorSource);
+        validator = JSON.parse(validatorSource);
 
         valid = validateByType(parameter, validator);
     } else {
+        validator = validatorSource;
+
         if (typeof validator === 'function') {
-            valid = parameter instanceof validatorSource;
+            valid = parameter instanceof validator;
         } else {
             valid = parameter === validator;
         }
     }
 
     if (!valid) {
+        var argumentType = (parameterName === 'return' ? 'Return statement' : 'Parameter "' + parameterName + '"');
         var error = (
-            (parameterName === 'return' ? 'Return statement' : 'Parameter "' + parameterName + '"') +
-            ' in function "' + functionName + '" has wrong type. ' +
-            'It\'s "' + (invalidType || parameter) + '" now, but must have ' + makeTypeReadable(validator) + ' type.'
+            '\n' +
+            ERROR_PADDING + argumentType + ' in function "' + functionName + '" has wrong type.' + '\n' +
+            ERROR_PADDING + 'Expected: ' + makeTypeReadable(validator) + '\n' +
+            ERROR_PADDING + 'Current:  "' + (invalidType || parameter) + '"' + '\n'
         );
 
         throw new TypeError(error);
@@ -44,7 +51,7 @@ function __TYPECHECK_HELPER_FUNCTION__(functionName, parameterName, parameter, v
 
     // HELPERS
 
-    function makeTypeReadable(validator, dontWrap) {
+    function makeTypeReadable(validator) {
         let typeDeclaration;
 
         if (typeof validator === 'string') {
@@ -53,13 +60,13 @@ function __TYPECHECK_HELPER_FUNCTION__(functionName, parameterName, parameter, v
 
         if (Array.isArray(validator)) {
             typeDeclaration = validator.map(function(type) {
-                return makeTypeReadable(type, true);
+                return makeTypeReadable(type);
             }).join('|');
         }
 
         if (typeof validator === 'object') {
             if ('root' in validator) {
-                typeDeclaration = validator.root + '<' + makeTypeReadable(validator.children, true) + '>';
+                typeDeclaration = validator.root + '<' + makeTypeReadable(validator.children) + '>';
             }
 
             if ('record' in validator) {
@@ -67,11 +74,15 @@ function __TYPECHECK_HELPER_FUNCTION__(functionName, parameterName, parameter, v
             }
 
             if ('optional' in validator) {
-                typeDeclaration = makeTypeReadable(validator.parameter, true) + '=';
+                typeDeclaration = makeTypeReadable(validator.parameter) + ' (optional)';
             }
         }
 
-        return dontWrap ? typeDeclaration : '{' + typeDeclaration + '}';
+        if (typeof validator === 'function') {
+            typeDeclaration = validator.name;
+        }
+
+        return typeDeclaration;
     }
 
 
@@ -145,7 +156,11 @@ function __TYPECHECK_HELPER_FUNCTION__(functionName, parameterName, parameter, v
                 isValid = isRootValid && isChildrenValid;
 
                 if (!isValid && isRootValid) {
-                    invalidType = type.root + '<*>';
+                    try {
+                        invalidType = JSON.stringify(parameter);
+                    } catch (e) {
+                        invalidType = type.root + '<*>';
+                    }
                 }
 
                 return isValid;

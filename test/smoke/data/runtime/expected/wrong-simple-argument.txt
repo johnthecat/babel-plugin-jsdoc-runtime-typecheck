@@ -1,1 +1,1 @@
-'TypeError: Parameter "b" in function "test" has wrong type. It\'s "2" now, but must have {Number} type.'
+'TypeError: \n    Parameter "b" in function "test" has wrong type.\n    Expected: Number\n    Current:  "2"\n'
