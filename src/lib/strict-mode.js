@@ -18,5 +18,15 @@ module.exports.ERROR = {
  * @param {String} error
  */
 module.exports.throwException = (path, error) => {
-    throw path.buildCodeFrameError(error);
+    let errorAnchorPath = path;
+
+    if (path.node && (path.node.loc || path.node._loc)) {
+        errorAnchorPath = path;
+    } else {
+        if (path.isReturnStatement() && path.node.argument) {
+            errorAnchorPath = path.get('argument');
+        }
+    }
+
+    throw errorAnchorPath.buildCodeFrameError(error);
 };

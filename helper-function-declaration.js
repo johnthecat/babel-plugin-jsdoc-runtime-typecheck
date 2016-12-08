@@ -52,7 +52,9 @@ function __TYPECHECK_HELPER_FUNCTION__(functionName, parameterName, parameter, v
         }
 
         if (Array.isArray(validator)) {
-            typeDeclaration = validator.join('|');
+            typeDeclaration = validator.map(function(type) {
+                return makeTypeReadable(type, true);
+            }).join('|');
         }
 
         if (typeof validator === 'object') {
@@ -188,10 +190,6 @@ function __TYPECHECK_HELPER_FUNCTION__(functionName, parameterName, parameter, v
             }
         }
 
-        if (type in this) {
-            return parameter instanceof this[type];
-        }
-
         return instanceOf(parameter, type);
     }
 }
@@ -201,9 +199,6 @@ function __TYPECHECK_HELPER_FUNCTION__(functionName, parameterName, parameter, v
  */
 module.exports = function (name) {
     var template = __TYPECHECK_HELPER_FUNCTION__.toString().replace('__TYPECHECK_HELPER_FUNCTION__', name);
-    var ast = babelTemplate(template)();
 
-    return function() {
-        return ast;
-    };
+    return babelTemplate(template);
 };

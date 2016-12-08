@@ -3,6 +3,7 @@ const doctrine = require('doctrine');
 
 const NESTED_PARAMETER_SEPARATOR = '.';
 const WRONG_TYPES = {
+    'function': 'Function',
     'object': 'Object',
     'array': 'Array',
     'number': 'Number',
