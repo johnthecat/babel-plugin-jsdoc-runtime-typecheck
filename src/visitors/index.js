@@ -6,6 +6,7 @@ const parseJsDoc = require('../lib/parse-jsdoc');
 const normalizeFunctionBody = require('../lib/normalize-function-body');
 const insertParametersCheck = require('../lib/insert-parameters-check');
 const returnStatementVisitorFactory = require('./return-statement');
+const strictMode = require('../lib/strict-mode');
 
 const helpers = {
     /**
@@ -99,7 +100,13 @@ module.exports = (typecheckFunctionCall, globalState, t) => {
      * @param {String} [name]
      */
     function executeFunctionTransformation(comment, path, name) {
-        let jsDoc = parseJsDoc(comment);
+        let jsDoc;
+
+        try {
+            jsDoc = parseJsDoc(comment, globalState.useStrict);
+        } catch (error) {
+            strictMode.throwSpecificException(path, 'jsDoc parser', error);
+        }
 
         if (!jsDoc) return;
 

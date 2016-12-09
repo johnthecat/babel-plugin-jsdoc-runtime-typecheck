@@ -98,9 +98,10 @@ function findReturnTag(tag) {
 
 /**
  * @param {String} comment - comment with jsDoc
+ * @param {Boolean} useStrict
  * @returns {{parameters: Object, returnStatement: Object, name: String}|null}
  */
-module.exports = (comment) => {
+module.exports = (comment, useStrict) => {
     /**
      * @type {{tags: Array<Object>, description: String}}
      */
@@ -133,15 +134,23 @@ module.exports = (comment) => {
         parameterRoot = parameterName[0];
         parameterField = parameterName[1];
 
-        if (typeof parameters[parameterRoot] === 'object' && 'fields' in parameters[parameterRoot]) {
+        if (
+            typeof parameters[parameterRoot] === 'object' &&
+            parameters[parameterRoot] !== null &&
+            'fields' in parameters[parameterRoot]
+        ) {
             parameters[parameterRoot].fields[parameterField] = normalizeTypes(parameter.type);
-        } else {
+        } else if (parameters[parameterRoot] !== void(0) || !useStrict) {
             parameters[parameterRoot] = {
                 record: parameters[parameterRoot],
                 fields: {
                     [parameterField]: normalizeTypes(parameter.type)
                 }
             };
+        } else {
+            if (useStrict) {
+                throw `Can't parse field "${parameterField}" in "${parameterRoot}" descriptor: "${parameterRoot}" is undefined.`;
+            }
         }
     }
 

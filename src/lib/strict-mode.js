@@ -1,6 +1,7 @@
 const chalk = require('chalk');
 
-const PREFIX = chalk.bold.red.inverse('[TYPECHECK STRICT MODE]') + ':';
+const SEPARATOR = chalk.gray('➞');
+const PREFIX = chalk.bold.red.inverse('[TYPECHECK STRICT MODE]') + ' ' + SEPARATOR;
 
 function createMessage(message) {
     return `${PREFIX} ${chalk.underline(message)}`;
@@ -29,4 +30,16 @@ module.exports.throwException = (path, error) => {
     }
 
     throw errorAnchorPath.buildCodeFrameError(error);
+};
+
+/**
+ * @param {NodePath} path
+ * @param {String} component
+ * @param {String} error
+ */
+module.exports.throwSpecificException = (path, component, error) => {
+    let componentName = chalk.bold.yellow.inverse(`[${component}]`);
+    let normalizedError = `${PREFIX} ${componentName} ${SEPARATOR} ${chalk.underline(error)}`;
+
+    module.exports.throwException(path, normalizedError);
 };

@@ -130,6 +130,10 @@ function __TYPECHECK_HELPER_FUNCTION__(functionName, parameterName, parameter, v
             });
         }
 
+        if (type === null) {
+            return true;
+        }
+
         if (typeof type === 'object') {
             if ('root' in type) {
                 isRootValid = validateByType(parameter, type.root);

@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.5
+### Bugfix
+* Fixed parsing and validation error for nested parameters
+
 ## 1.1.4
 ### Features
 * New error message
