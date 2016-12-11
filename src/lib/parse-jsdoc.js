@@ -39,10 +39,10 @@ function normalizeTypes(type) {
             return null;
 
         case doctrine.Syntax.NullLiteral:
-            return 'null';
+            return normalizeConstructorName('null');
 
         case doctrine.Syntax.UndefinedLiteral:
-            return 'undefined';
+            return normalizeConstructorName('undefined');
 
         case doctrine.Syntax.NameExpression:
             return normalizeConstructorName(type.name);
@@ -74,6 +74,9 @@ function normalizeTypes(type) {
 
         case doctrine.Syntax.FieldType:
             return normalizeTypes(type.value);
+
+        case doctrine.Syntax.FunctionType:
+            return normalizeConstructorName('Function');
 
         case doctrine.Syntax.NonNullableType:
         case doctrine.Syntax.NullableType:
