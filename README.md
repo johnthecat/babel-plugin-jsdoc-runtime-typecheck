@@ -165,10 +165,11 @@ SyntaxError: input.js: [TYPECHECK STRICT MODE]: Function argument type annotatio
         ```
         @param {Object} data 
         @param {Number} data.id
+        @param {String} data.name
         
         //or
         
-        @param {{id: Number, name: String}} name
+        @param {{id: Number, name: String}} data
         ```
         
     * `@param {function(Array<Number>)} name` - check type of function 
