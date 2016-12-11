@@ -1,1 +1,1 @@
-'TypeError: \n    Parameter "data" in function "test" has wrong type.\n    Expected: {"id":"Number","name":"String"}|null\n    Current:  "{"id":"2"}"\n'
+'TypeError: \n    Parameter "data" in function "test" has wrong type.\n    Expected type: {"id":"Number","name":"String"}|null\n    Current value: "{"id":"2"}"\n'

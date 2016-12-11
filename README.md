@@ -30,7 +30,7 @@ function test(a) {
 ```
 
 Result:
-<img alt="Console error example" src="https://cloud.githubusercontent.com/assets/5618341/20533157/a42210de-b0ed-11e6-818f-c91fe8866678.png"/>
+<img alt="Console error example" src="https://cloud.githubusercontent.com/assets/5618341/21081744/f41d1440-bfdd-11e6-983a-29b4d5f6dff1.png"/>
 
 
 **CAUTION: Use this plugin only in development, it will slow down your code (a lot of additional function calls and large helper function).**
@@ -159,9 +159,19 @@ SyntaxError: input.js: [TYPECHECK STRICT MODE]: Function argument type annotatio
     * `@param {Number} [name]` - optional
     * `@param {?Number} name`
     * `@param {!Number} name`
-    * `@param {Number|String} name`
-    * `@param {Array<Number>} name` - check every item in array
-    * `@param {{id: Number, name: String}} name` - check defined keys in Object
+    * `@param {Number|String} id`
+    * `@param {Array<Number>} collection` - check every item in array
+    * Check defined keys in Object:
+        ```
+        @param {Object} data 
+        @param {Number} data.id
+        
+        //or
+        
+        @param {{id: Number, name: String}} name
+        ```
+        
+    * `@param {function(Array<Number>)} name` - check type of function 
 * `@returns` or `@return` - type annotation are same as in params.
 
 ### Language constructions

@@ -1,1 +1,1 @@
-'TypeError: \n    Parameter "record" in function "test" has wrong type.\n    Expected: {"a":"Number","b":"Number"}\n    Current:  "{"a":1,"b":2,"c":3}"\n'
+'TypeError: \n    Parameter "record" in function "test" has wrong type.\n    Expected type: {"a":"Number","b":"Number"}\n    Current value: "{"a":1,"b":2,"c":3}"\n'

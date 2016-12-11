@@ -1,1 +1,1 @@
-'TypeError: \n    Parameter "arr" in function "test" has wrong type.\n    Expected: Array<Number>\n    Current:  "[1,"2"]"\n'
+'TypeError: \n    Parameter "arr" in function "test" has wrong type.\n    Expected type: Array<Number>\n    Current value: "[1,"2"]"\n'

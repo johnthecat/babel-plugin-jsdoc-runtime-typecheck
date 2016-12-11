@@ -40,8 +40,8 @@ function __TYPECHECK_HELPER_FUNCTION__(functionName, parameterName, parameter, v
         var error = (
             '\n' +
             ERROR_PADDING + argumentType + ' in function "' + functionName + '" has wrong type.' + '\n' +
-            ERROR_PADDING + 'Expected: ' + makeTypeReadable(validator) + '\n' +
-            ERROR_PADDING + 'Current:  "' + (invalidType || parameter) + '"' + '\n'
+            ERROR_PADDING + 'Expected type: ' + makeTypeReadable(validator) + '\n' +
+            ERROR_PADDING + 'Current value: "' + (invalidType || parameter) + '"' + '\n'
         );
 
         throw new TypeError(error);
