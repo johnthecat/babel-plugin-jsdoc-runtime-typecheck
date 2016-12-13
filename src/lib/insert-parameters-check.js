@@ -39,13 +39,18 @@ module.exports = (functionName, functionTemplate, functionPath, jsDoc, useStrict
         for (let index = nodes.length - 1; index >= 0; index--) {
             shouldThrowException = true;
             path = nodes[index];
-            node = path.node;
 
             if (path.isAssignmentPattern()) {
-                node = node.left;
+                shouldThrowException = false;
+                count += insertAssertionBasedOn(
+                    [path.get('left')]
+                );
             } else
             if (path.isRestElement()) {
-                node = node.argument;
+                shouldThrowException = false;
+                count += insertAssertionBasedOn(
+                    [path.get('argument')]
+                );
             } else
             if (path.isObjectProperty()) {
                 shouldThrowException = false;
@@ -66,6 +71,7 @@ module.exports = (functionName, functionTemplate, functionPath, jsDoc, useStrict
                 );
             }
 
+            node = path.node;
             name = node.name;
             type = parameters[name];
 

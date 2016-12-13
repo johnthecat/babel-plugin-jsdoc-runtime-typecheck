@@ -1,8 +1,9 @@
 /**
+ * @param {Number} num
  * @param {Array<Number>} parameters
  * @returns {Number}
  * @typecheck
  */
-function test(...parameters) {
-    return parameters[0];
+function test(num, ...parameters) {
+    return num + parameters[0];
 }

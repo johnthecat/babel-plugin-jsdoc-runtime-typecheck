@@ -5,6 +5,6 @@
  * @returns {Number}
  * @typecheck
  */
-function test({t: a, b = 1, c}) {
+function test({t: a, b = 1, c} = {}) {
     return a + b + c;
 }

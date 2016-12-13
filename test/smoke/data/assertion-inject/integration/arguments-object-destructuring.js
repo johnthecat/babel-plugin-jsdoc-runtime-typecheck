@@ -7,8 +7,9 @@
  * @returns {Number}
  * @typecheck
  */
-function test(_ref) {
-  var a = _ref.t,
+function test() {
+  var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+      a = _ref.t,
       _ref$b = _ref.b,
       b = _ref$b === undefined ? 1 : _ref$b,
       c = _ref.c;

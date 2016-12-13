@@ -5,7 +5,7 @@
  * @returns {Number}
  * @typecheck
  */
-function test({ t: a, b = 1, c }) {
+function test({ t: a, b = 1, c } = {}) {
   __executeTypecheck__("test", "a", a, "\"Number\"");
 
   __executeTypecheck__("test", "b", b, "\"Number\"");
