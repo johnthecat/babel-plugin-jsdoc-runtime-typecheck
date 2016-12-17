@@ -1,6 +1,7 @@
 const config = require('../../config.json');
 
 const ALLOWED_NODE_TYPE = 'CallExpression';
+const FUNCTION_NAME = config.functionName;
 
 /**
  * @param {NodePath} path
@@ -14,7 +15,7 @@ function traverseToReturnStatement(path) {
             if (
                 returnPath.node.argument &&
                 returnPath.node.argument.type === ALLOWED_NODE_TYPE &&
-                returnPath.node.argument.callee.name === config.functionName
+                returnPath.node.argument.callee.name === FUNCTION_NAME
             ) {
                 found = true;
             }
@@ -32,7 +33,7 @@ function findInsertedExpression(path) {
     if (path.isExpressionStatement()) {
         return (
             path.node.expression.type === ALLOWED_NODE_TYPE &&
-            path.node.expression.callee.name === config.functionName
+            path.node.expression.callee.name === FUNCTION_NAME
         );
     }
 
@@ -40,7 +41,7 @@ function findInsertedExpression(path) {
         return (
             path.node.argument &&
             path.node.argument.type === ALLOWED_NODE_TYPE &&
-            path.node.argument.callee.name === config.functionName
+            path.node.argument.callee.name === FUNCTION_NAME
         );
     }
 

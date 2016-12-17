@@ -14,8 +14,6 @@ var babelTemplate = require('babel-template');
  * @returns {*} parameter
  */
 function __TYPECHECK_HELPER_FUNCTION__(functionName, parameterName, parameter, validatorSource) {
-    var ERROR_PADDING = '    ';
-
     var isRootValid = false;
     var invalidType = null;
     var valid = false;
@@ -36,15 +34,21 @@ function __TYPECHECK_HELPER_FUNCTION__(functionName, parameterName, parameter, v
     }
 
     if (!valid) {
+        var ERROR_PADDING = '    ';
         var argumentType = (parameterName === 'return' ? 'Return statement' : 'Parameter "' + parameterName + '"');
-        var error = (
+        var message = (
             '\n' +
             ERROR_PADDING + argumentType + ' in function "' + functionName + '" has wrong type.' + '\n' +
             ERROR_PADDING + 'Expected type: ' + makeTypeReadable(validator) + '\n' +
             ERROR_PADDING + 'Current value: "' + (invalidType || parameter) + '"' + '\n'
         );
+        var error = new TypeError(message);
 
-        throw new TypeError(error);
+        if (error.stack) {
+            error.stack = error.stack.replace(/__TYPECHECK_HELPER_FUNCTION__/gm, argumentType + ' typecheck failed');
+        }
+
+        throw error;
     }
 
     return parameter;
@@ -107,6 +111,9 @@ function __TYPECHECK_HELPER_FUNCTION__(functionName, parameterName, parameter, v
             case void(0):
                 return false;
 
+            case null:
+                return true;
+
             case 'null':
                 return parameter === null;
 
@@ -123,15 +130,10 @@ function __TYPECHECK_HELPER_FUNCTION__(functionName, parameterName, parameter, v
                 return Array.isArray(parameter);
         }
 
-
         if (Array.isArray(type)) {
             return type.some(function (innerType) {
                 return validateByType(parameter, innerType);
             });
-        }
-
-        if (type === null) {
-            return true;
         }
 
         if (typeof type === 'object') {
@@ -195,13 +197,11 @@ function __TYPECHECK_HELPER_FUNCTION__(functionName, parameterName, parameter, v
 
                 isValid = isRootValid && isRecordValid;
 
-                if (!isValid) {
-                    if (isRootValid) {
-                        try {
-                            invalidType = JSON.stringify(parameter);
-                        } catch (e) {
-                            invalidType = type.record + '<*>';
-                        }
+                if (!isValid && isRootValid) {
+                    try {
+                        invalidType = JSON.stringify(parameter);
+                    } catch (e) {
+                        invalidType = type.record + '<*>';
                     }
                 }
 
@@ -217,7 +217,7 @@ function __TYPECHECK_HELPER_FUNCTION__(functionName, parameterName, parameter, v
  * @param {String} name
  */
 module.exports = function (name) {
-    var template = __TYPECHECK_HELPER_FUNCTION__.toString().replace('__TYPECHECK_HELPER_FUNCTION__', name);
+    var template = __TYPECHECK_HELPER_FUNCTION__.toString().replace(/__TYPECHECK_HELPER_FUNCTION__/gm, name);
 
     return babelTemplate(template);
 };
