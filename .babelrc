@@ -1,5 +1,10 @@
 {
     "presets": [
-        "es2015"
+        ["env", {
+            "loose": true,
+            "targets": {
+                "node": 4.7
+            }
+        }]
     ]
 }
