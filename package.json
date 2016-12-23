@@ -12,6 +12,7 @@
   "bugs": {
     "url": "https://github.com/johnthecat/babel-plugin-jsdoc-runtime-typecheck/issues"
   },
+  "keywords": ["build", "babel", "plugin", "jsdoc", "typecheck", "flow"],
   "main": "dist/index.js",
   "scripts": {
     "eslint-src": "eslint -c .eslintrc src/",
