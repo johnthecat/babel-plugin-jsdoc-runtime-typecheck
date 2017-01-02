@@ -34,13 +34,14 @@ function __TYPECHECK_HELPER_FUNCTION__(functionName, parameterName, parameter, v
     }
 
     if (!valid) {
-        var ERROR_PADDING = '    ';
+        var ERROR_PADDING = (' ').repeat(4);
+        var LINE_BREAK = '\n';
         var argumentType = (parameterName === 'return' ? 'Return statement' : 'Parameter "' + parameterName + '"');
         var message = (
-            '\n' +
-            ERROR_PADDING + argumentType + ' in function "' + functionName + '" has wrong type.' + '\n' +
-            ERROR_PADDING + 'Expected type: ' + makeTypeReadable(validator) + '\n' +
-            ERROR_PADDING + 'Current value: "' + (invalidType || parameter) + '"' + '\n'
+            LINE_BREAK +
+            ERROR_PADDING + argumentType + ' in function "' + functionName + '" has wrong type.' + LINE_BREAK +
+            ERROR_PADDING + 'Expected type: ' + makeTypeReadable(validator) + LINE_BREAK +
+            ERROR_PADDING + 'Current value: "' + (invalidType || parameter) + '"' + LINE_BREAK
         );
         var error = new TypeError(message);
 
