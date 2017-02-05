@@ -108,7 +108,10 @@ module.exports = (typecheckFunctionCall, globalState, t) => {
             strictMode.throwSpecificException(path, 'jsDoc parser', error);
         }
 
-        if (!jsDoc) return;
+        if (!jsDoc) {
+            path.stop();
+            return;
+        }
 
         let functionName = name || jsDoc.name || (path.node.id ? path.node.id.name : config.defaultFunctionName);
 

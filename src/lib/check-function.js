@@ -18,6 +18,7 @@ function traverseToReturnStatement(path) {
                 returnPath.node.argument.callee.name === FUNCTION_NAME
             ) {
                 found = true;
+                path.stop();
             }
         }
     });

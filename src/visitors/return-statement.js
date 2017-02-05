@@ -16,6 +16,7 @@ module.exports = (typecheckFunctionCall, globalState, t) => {
              * Check for valid function parent, prevents changing return statements in nested functions
              */
             if (path.getFunctionParent().node !== this.functionPath.node) {
+                path.stop();
                 return;
             }
 
