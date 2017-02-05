@@ -1,4 +1,4 @@
-const config = require('../../config.json');
+const config = require('../../shared/config.json');
 
 const findComment = require('../lib/find-comment');
 const canInjectIntoFunction = require('../lib/check-function');

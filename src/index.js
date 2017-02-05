@@ -18,7 +18,7 @@ require('core-js/fn/object/assign');
 require('core-js/fn/array/includes');
 require('core-js/fn/string/includes');
 
-const config = require('../config.json');
+const config = require('../shared/config.json');
 const typecheckTemplate = require('./lib/typecheck-function-template');
 const findGlobalDirective = require('./lib/find-global-directive');
 const functionVisitorsFactory = require('./visitors');

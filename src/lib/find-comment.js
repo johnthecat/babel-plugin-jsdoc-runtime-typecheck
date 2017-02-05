@@ -1,6 +1,6 @@
 require('core-js/fn/string/includes');
 
-const config = require('../../config.json');
+const config = require('../../shared/config.json');
 
 const DEFAULT_COMMENT_TOP_PADDING = -1;
 const ALLOWED_COMMENT_TYPE = 'CommentBlock';

@@ -1,4 +1,4 @@
-const config = require('../../config.json');
+const config = require('../../shared/config.json');
 
 const ALLOWED_NODE_TYPE = 'CallExpression';
 const FUNCTION_NAME = config.functionName;

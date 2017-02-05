@@ -1,4 +1,4 @@
-const config = require('../../config.json');
+const config = require('../../shared/config.json');
 const doctrine = require('doctrine');
 
 const NESTED_PARAMETER_SEPARATOR = '.';

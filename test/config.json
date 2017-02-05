@@ -2,9 +2,9 @@
   "path": {
     "testsInitialization": "./test/initialization.js",
     "smokeTest": "./test/smoke",
-    "smokeTestData": "./test/smoke/data",
+    "smokeTestData": "./test/smoke/fixtures",
     "unitTest": "./test/unit",
-    "unitTestData": "./test/unit/data",
+    "unitTestData": "./test/unit/fixtures",
     "plugin": "./src/index.js"
   }
 }

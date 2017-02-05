@@ -1,4 +1,4 @@
-const config = require('../../config.json');
+const config = require('../../shared/config.json');
 
 function findFirstNode(node, index) {
     return index === 0;
