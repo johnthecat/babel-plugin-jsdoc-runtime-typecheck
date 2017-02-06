@@ -1,5 +1,25 @@
 # Changelog
 
+## 1.2.0
+### Features
+* Changed behavior of record validation. Now it doesn't throw error in this case:
+    ```javascript
+    /**
+     * @param {{a: Number, b: Number}} record
+     * @returns {Number}
+     */
+    function test(record) {
+        return record.a + record.b;
+    }
+      
+    test({ a: 1, b: 2, c: 3 });
+    ```
+
+### Other
+* Refactored comment finder;
+* Refactored function validator;
+* Minor performance increase.
+
 ## 1.1.5
 ### Bugfix
 * Fixed parsing and validation error for nested parameters

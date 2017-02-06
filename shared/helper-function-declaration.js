@@ -186,8 +186,8 @@ function __TYPECHECK_HELPER_FUNCTION__(functionName, parameterName, parameter, v
                 var isRecordValid = true;
                 var isThisRecordValid;
 
-                for (field in parameter) {
-                    if (!parameter.hasOwnProperty(field)) continue;
+                for (field in type.fields) {
+                    if (!type.fields.hasOwnProperty(field)) continue;
 
                     isThisRecordValid = validateByType(parameter[field], type.fields[field]);
 
