@@ -57,13 +57,16 @@ module.exports = (path) => {
     /**
      * @type {Array<NodePath>}
      */
-    let innerPaths = path.get('body.body');
+    const innerPaths = path.get('body.body');
+
+    let result = true;
 
     for (let index = 0, count = innerPaths.length; index < count; index++) {
         if (findInsertedExpression(innerPaths[index])) {
-            return false;
+            result = false;
+            break;
         }
     }
 
-    return true;
+    return result;
 };
