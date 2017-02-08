@@ -15,10 +15,9 @@ describe('[UNIT] Parse jsDoc', () => {
     describe('correctly parse docs', () => {
         fs.readdirSync(SOURCE_DIRECTORY).forEach((filename) => {
             it(`in '${filename}'`, () => {
-                let fileSource = fs.readFileSync(path.join(SOURCE_DIRECTORY, filename), FILE_ENCODING);
-                let expectedJSON = require(path.join(EXPECTED_DIRECTORY, filename));
-
-                let parsingResult = parseJSDoc(fileSource);
+                const fileSource = fs.readFileSync(path.join(SOURCE_DIRECTORY, filename), FILE_ENCODING);
+                const expectedJSON = require(path.join(EXPECTED_DIRECTORY, filename));
+                const parsingResult = parseJSDoc(fileSource);
 
                 chai.expect(parsingResult).to.deep.equal(expectedJSON);
             });

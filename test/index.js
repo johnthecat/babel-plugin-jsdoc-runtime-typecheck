@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const Mocha = require('mocha');
 
-let mocha = new Mocha();
+const mocha = new Mocha();
 
 addFilesFrom(mocha, path.resolve(config.path.smokeTest));
 addFilesFrom(mocha, path.resolve(config.path.unitTest));

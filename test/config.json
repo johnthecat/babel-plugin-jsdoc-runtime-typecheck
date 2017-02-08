@@ -1,6 +1,5 @@
 {
   "path": {
-    "testsInitialization": "./test/initialization.js",
     "smokeTest": "./test/smoke",
     "smokeTestData": "./test/smoke/fixtures",
     "unitTest": "./test/unit",

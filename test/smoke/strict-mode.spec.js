@@ -1,6 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 const babel = require('babel-core');
+const chai = require('chai');
 
 const config = require('../config.json');
 
@@ -24,23 +25,27 @@ const BABEL_CONFIG = {
     ]
 };
 
+const transform = (source) => {
+    let transformed = false;
+
+    try {
+        babel.transform(source, BABEL_CONFIG);
+        transformed = true;
+    } catch (e) {
+        // nothing to do
+    }
+
+    return transformed;
+};
+
 describe('[SMOKE] Strict mode', () => {
     describe('should throw exception', () => {
         fs.readdirSync(SOURCE_DIRECTORY_ERRORS).forEach((filename) => {
             it(`in '${filename}'`, () => {
-                let fileSource = fs.readFileSync(path.join(SOURCE_DIRECTORY_ERRORS, filename), FILE_ENCODING);
-                let transformed = false;
+                const fileSource = fs.readFileSync(path.join(SOURCE_DIRECTORY_ERRORS, filename), FILE_ENCODING);
+                const transformed = transform(fileSource);
 
-                try {
-                    babel.transform(fileSource, BABEL_CONFIG);
-                    transformed = true;
-                } catch (e) {
-                    // if exception was thrown - it's okay, test passed
-                }
-
-                if (transformed) {
-                    throw new Error(EXCEPTION_NOT_THROWN);
-                }
+                chai.assert.isNotOk(transformed, EXCEPTION_NOT_THROWN);
             });
         });
     });
@@ -48,13 +53,10 @@ describe('[SMOKE] Strict mode', () => {
     describe('shouldn\'t throw exception', () => {
         fs.readdirSync(SOURCE_DIRECTORY_NO_ERRORS).forEach((filename) => {
             it(`in '${filename}'`, () => {
-                let fileSource = fs.readFileSync(path.join(SOURCE_DIRECTORY_NO_ERRORS, filename), FILE_ENCODING);
+                const fileSource = fs.readFileSync(path.join(SOURCE_DIRECTORY_NO_ERRORS, filename), FILE_ENCODING);
+                const transformed = transform(fileSource);
 
-                try {
-                    babel.transform(fileSource, BABEL_CONFIG);
-                } catch(e) {
-                    throw new Error(EXCEPTION_THROWN);
-                }
+                chai.assert.isOk(transformed, EXCEPTION_THROWN);
             });
         });
     });
