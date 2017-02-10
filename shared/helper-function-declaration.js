@@ -182,9 +182,14 @@ function __TYPECHECK_HELPER_FUNCTION__(functionName, parameterName, parameter, v
             }
 
             if ('record' in type) {
+                if (parameter === null) {
+                    return false;
+                }
+
                 isRootValid = validateByType(parameter, type.record);
                 var isRecordValid = true;
                 var isThisRecordValid;
+
 
                 for (field in type.fields) {
                     if (!type.fields.hasOwnProperty(field)) continue;
