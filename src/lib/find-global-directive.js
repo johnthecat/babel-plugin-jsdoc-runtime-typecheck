@@ -20,13 +20,13 @@ module.exports = (path, state) => {
         useDirective = config.default.useDirective;
     }
 
-    let firstNode = path.node.body.find(findFirstNode);
+    const firstNode = path.node.body.find(findFirstNode);
 
     if (!firstNode) {
         return false;
     }
 
-    let topComments = firstNode.leadingComments;
+    const topComments = firstNode.leadingComments;
 
     if (!topComments) {
         return false;

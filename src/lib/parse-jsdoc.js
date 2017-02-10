@@ -101,23 +101,23 @@ function findReturnTag(tag) {
 
 /**
  * @param {String} comment - comment with jsDoc
- * @param {Boolean} useStrict
+ * @param {Boolean} [useStrict]
  * @returns {{parameters: Object, returnStatement: Object, name: String}|null}
  */
-module.exports = (comment, useStrict) => {
+module.exports = (comment, useStrict = false) => {
     /**
      * @type {{tags: Array<Object>, description: String}}
      */
-    let commentAst = doctrine.parse(comment, config.doctrineConfig);
+    const commentAst = doctrine.parse(comment, config.doctrineConfig);
 
     if (!commentAst.tags.length) {
         return null;
     }
 
-    let tags = commentAst.tags;
-    let nameDescription = tags.find(findNameTag);
-    let paramsDescriptions = tags.filter(findParameterTag);
-    let returnDescription = tags.find(findReturnTag);
+    const tags = commentAst.tags;
+    const nameDescription = tags.find(findNameTag);
+    const paramsDescriptions = tags.filter(findParameterTag);
+    const returnDescription = tags.find(findReturnTag);
 
     let parameters = {};
     let parameter;
@@ -125,6 +125,7 @@ module.exports = (comment, useStrict) => {
     let parameterRoot;
     let parameterField;
 
+    // TODO refactor that shit
     for (let index = 0, count = paramsDescriptions.length; index < count; index++) {
         parameter = paramsDescriptions[index];
         parameterName = parameter.name.split(NESTED_PARAMETER_SEPARATOR);
@@ -150,28 +151,22 @@ module.exports = (comment, useStrict) => {
                     [parameterField]: normalizeTypes(parameter.type)
                 }
             };
-        } else {
-            if (useStrict) {
-                throw `Can't parse field "${parameterField}" in "${parameterRoot}" descriptor: "${parameterRoot}" is undefined.`;
-            }
+        } else if (useStrict) {
+            throw `Can't parse field "${parameterField}" in "${parameterRoot}" descriptor: "${parameterRoot}" is undefined.`;
         }
     }
 
-    let returnStatement;
+    const result = {
+        parameters
+    };
 
     if (returnDescription) {
-        returnStatement = normalizeTypes(returnDescription.type);
+        result.returnStatement = normalizeTypes(returnDescription.type);
     }
-
-    let name;
 
     if (nameDescription) {
-        name = nameDescription.name;
+        result.name = nameDescription.name;
     }
 
-    return {
-        name,
-        parameters,
-        returnStatement
-    };
+    return result;
 };

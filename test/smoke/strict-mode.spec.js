@@ -6,8 +6,8 @@ const chai = require('chai');
 const config = require('../config.json');
 
 const DATA_DIRECTORY = path.join(config.path.smokeTestData, 'strict-mode');
-const SOURCE_DIRECTORY_ERRORS = path.join(DATA_DIRECTORY, 'should-throw-exception');
-const SOURCE_DIRECTORY_NO_ERRORS = path.join(DATA_DIRECTORY, 'should-not-throw-exception');
+const SOURCE_DIRECTORY_ERRORS = path.join(DATA_DIRECTORY, 'exception');
+const SOURCE_DIRECTORY_NO_ERRORS = path.join(DATA_DIRECTORY, 'no-exception');
 
 const FILE_ENCODING = 'utf8';
 

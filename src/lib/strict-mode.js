@@ -21,10 +21,10 @@ module.exports.ERROR = {
 module.exports.throwException = (path, error) => {
     let errorAnchorPath = path;
 
-    if (path.node && (path.node.loc || path.node._loc)) {
-        errorAnchorPath = path;
-    } else {
-        if (path.isReturnStatement() && path.node.argument) {
+    if (path.node) {
+        if (path.node.loc || path.node._loc) {
+            errorAnchorPath = path;
+        } else if (path.isReturnStatement() && path.node.argument) {
             errorAnchorPath = path.get('argument');
         }
     }
@@ -38,8 +38,8 @@ module.exports.throwException = (path, error) => {
  * @param {String} error
  */
 module.exports.throwSpecificException = (path, component, error) => {
-    let componentName = chalk.bold.yellow.inverse(`[${component}]`);
-    let normalizedError = `${PREFIX} ${componentName} ${SEPARATOR} ${chalk.underline(error)}`;
+    const componentName = chalk.bold.yellow.inverse(`[${component}]`);
+    const normalizedError = `${PREFIX} ${componentName} ${SEPARATOR} ${chalk.underline(error)}`;
 
     module.exports.throwException(path, normalizedError);
 };
