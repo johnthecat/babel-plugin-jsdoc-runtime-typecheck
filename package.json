@@ -12,33 +12,42 @@
   "bugs": {
     "url": "https://github.com/johnthecat/babel-plugin-jsdoc-runtime-typecheck/issues"
   },
-  "keywords": ["build", "babel", "plugin", "jsdoc", "typecheck", "flow"],
+  "keywords": [
+    "build",
+    "babel",
+    "plugin",
+    "jsdoc",
+    "typecheck",
+    "flow"
+  ],
   "main": "dist/index.js",
   "scripts": {
-    "eslint-src": "eslint -c .eslintrc src/",
-    "eslint-test": "eslint --ignore-path test/.eslintignore -c test/.eslintrc test/",
-    "build": "npm run eslint-src && babel src --out-dir dist",
-    "watch": "babel src --watch --out-dir dist",
-    "test": "npm run eslint-test && node test",
-    "ci-build": "npm run test && npm run build"
+    "eslint:src": "eslint -c .eslintrc src/",
+    "eslint:test": "eslint --ignore-path test/.eslintignore -c test/.eslintrc test/",
+    "build": "npm run eslint:src && babel src --out-dir dist",
+    "build:watch": "babel src --watch --out-dir dist",
+    "build:ci": "npm run test && npm run build",
+    "test": "npm run eslint:test && node test",
+    "test:watch": "npm run eslint:test && node test --watch"
   },
   "pre-commit": [
-    "ci-build"
+    "build:ci"
   ],
   "devDependencies": {
-    "babel-cli": "^6.22.2",
-    "babel-core": "^6.22.1",
-    "babel-preset-env": "^1.1.8",
-    "babel-preset-es2015": "^6.22.0",
+    "babel-cli": "^6.24.0",
+    "babel-core": "^6.24.0",
+    "babel-preset-env": "^1.3.2",
+    "babel-preset-es2015": "^6.24.0",
     "chai": "^3.5.0",
     "chai-diff": "^1.0.1",
-    "eslint": "^3.15.0",
+    "eslint": "^3.19.0",
     "mocha": "^3.2.0",
     "pre-commit": "^1.2.2",
-    "sandbox": "^0.8.6"
+    "sandbox": "^0.8.6",
+    "yargs": "^7.0.2"
   },
   "dependencies": {
-    "babel-template": "6.22.0",
+    "babel-template": "6.23.0",
     "chalk": "1.1.3",
     "core-js": "2.4.1",
     "doctrine": "2.0.0"

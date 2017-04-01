@@ -1,5 +1,5 @@
 {
-  "default": {
+  "defaults": {
     "useDirective": "typecheck",
     "useStrict": false,
     "_useHelper": true
@@ -8,7 +8,7 @@
     "unwrap": true,
     "sloppy": true,
     "recoverable": true,
-    "tags": ["name", "param", "return", "returns"]
+    "tags": ["name", "param", "return", "returns", "typedef"]
   },
   "functionName": "__executeTypecheck__",
   "defaultFunctionName": "Anonymous function",

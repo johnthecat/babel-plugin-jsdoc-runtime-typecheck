@@ -1,7 +1,29 @@
-const config = require('../../shared/config.json');
+const {defaults} = require('../../shared/config.json');
 
 function findFirstNode(node, index) {
     return index === 0;
+}
+
+function hasGlobalDirective(comment, directive) {
+    return (
+        comment.value.includes(`@${directive}`) &&
+        !comment.value.includes('@param') &&
+        !comment.value.includes('@return')
+    );
+}
+
+/**
+ * @param {NodePath} path
+ * @returns {Array|null}
+ */
+function getHeadingComments(path) {
+    const firstNode = path.node.body.find(findFirstNode);
+
+    if (!firstNode) {
+        return null;
+    }
+
+    return firstNode.leadingComments;
 }
 
 /**
@@ -17,24 +39,23 @@ module.exports = (path, state) => {
     }
 
     if (!useDirective) {
-        useDirective = config.default.useDirective;
+        useDirective = defaults.useDirective;
     }
 
-    const firstNode = path.node.body.find(findFirstNode);
-
-    if (!firstNode) {
-        return false;
-    }
-
-    const topComments = firstNode.leadingComments;
+    const topComments = getHeadingComments(path);
 
     if (!topComments) {
         return false;
     }
 
-    return topComments.some((comment) => (
-        comment.value.includes(`@${useDirective}`) &&
-       !comment.value.includes('@param') &&
-       !comment.value.includes('@return')
-    ));
+    let globalDirective = false;
+
+    for (let index = 0, count = topComments.length; index < count; index++) {
+        if (hasGlobalDirective(topComments[index], useDirective)) {
+            globalDirective = true;
+            break;
+        }
+    }
+
+    return globalDirective;
 };

@@ -1,15 +1,13 @@
 const path = require('path');
-const fs = require('fs');
 const babel = require('babel-core');
 const chai = require('chai');
 
 const config = require('../config.json');
+const utils = require('../utils');
 
 const DATA_DIRECTORY = path.join(config.path.smokeTestData, 'strict-mode');
 const SOURCE_DIRECTORY_ERRORS = path.join(DATA_DIRECTORY, 'exception');
 const SOURCE_DIRECTORY_NO_ERRORS = path.join(DATA_DIRECTORY, 'no-exception');
-
-const FILE_ENCODING = 'utf8';
 
 const EXCEPTION_NOT_THROWN = 'Cannot handle this case - exception not thrown!';
 const EXCEPTION_THROWN = 'Cannot handle this case - exception thrown!';
@@ -25,39 +23,51 @@ const BABEL_CONFIG = {
     ]
 };
 
-const transform = (source) => {
+function transform (source) {
     let transformed = false;
 
     try {
         babel.transform(source, BABEL_CONFIG);
         transformed = true;
     } catch (e) {
-        // nothing to do
+        // nothing to do here
     }
 
     return transformed;
-};
+}
+
+function createPositiveTest(filename) {
+    it(`in '${filename}'`, (done) => {
+        utils.readFile(path.join(SOURCE_DIRECTORY_NO_ERRORS, filename)).then((fileSource) => {
+            const transformed = transform(fileSource);
+
+            chai.assert.isOk(transformed, EXCEPTION_THROWN);
+            done();
+        });
+    });
+}
+
+function createNegativeTest(filename) {
+    it(`in '${filename}'`, (done) => {
+        utils.readFile(path.join(SOURCE_DIRECTORY_ERRORS, filename)).then((fileSource) => {
+            const transformed = transform(fileSource);
+
+            chai.assert.isNotOk(transformed, EXCEPTION_NOT_THROWN);
+            done();
+        });
+    });
+}
 
 describe('[SMOKE] Strict mode', () => {
-    describe('should throw exception', () => {
-        fs.readdirSync(SOURCE_DIRECTORY_ERRORS).forEach((filename) => {
-            it(`in '${filename}'`, () => {
-                const fileSource = fs.readFileSync(path.join(SOURCE_DIRECTORY_ERRORS, filename), FILE_ENCODING);
-                const transformed = transform(fileSource);
-
-                chai.assert.isNotOk(transformed, EXCEPTION_NOT_THROWN);
-            });
+    describe('shouldn\'t throw exception', () => {
+        utils.readDirectory(SOURCE_DIRECTORY_NO_ERRORS).then((files) => {
+            files.forEach(createPositiveTest);
         });
     });
 
-    describe('shouldn\'t throw exception', () => {
-        fs.readdirSync(SOURCE_DIRECTORY_NO_ERRORS).forEach((filename) => {
-            it(`in '${filename}'`, () => {
-                const fileSource = fs.readFileSync(path.join(SOURCE_DIRECTORY_NO_ERRORS, filename), FILE_ENCODING);
-                const transformed = transform(fileSource);
-
-                chai.assert.isOk(transformed, EXCEPTION_THROWN);
-            });
+    describe('should throw exception', () => {
+        utils.readDirectory(SOURCE_DIRECTORY_ERRORS).then((files) => {
+            files.forEach(createNegativeTest);
         });
     });
 });

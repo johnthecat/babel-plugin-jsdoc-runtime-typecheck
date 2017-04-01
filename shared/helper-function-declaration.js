@@ -1,5 +1,5 @@
 /**
- * CAUTION! This file must be written in ES5 syntax, because it will be included in final client code.
+ * CAUTION! This file should be written in ES5 syntax, because it will be included in final client code.
  * It also shouldn't be transformed via babel, because es2015 preset will add helpers, that breaks code.
  * TODO add documentation
  */
@@ -221,6 +221,7 @@ function __TYPECHECK_HELPER_FUNCTION__(functionName, parameterName, parameter, v
 
 /**
  * @param {String} name
+ * @returns {NodePath} helper AST
  */
 module.exports = function (name) {
     var template = __TYPECHECK_HELPER_FUNCTION__.toString().replace(/__TYPECHECK_HELPER_FUNCTION__/gm, name);

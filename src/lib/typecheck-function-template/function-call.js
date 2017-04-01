@@ -5,7 +5,7 @@ const babelTemplate = require('babel-template');
  * @param {Object} t
  */
 module.exports = (name, t) => {
-    let template = babelTemplate(`${name}(FUNCTION_NAME, NAME, ARGUMENT, VALIDATOR);`);
+    const template = babelTemplate(`${name}(FUNCTION_NAME, NAME, ARGUMENT, VALIDATOR);`);
 
     /**
      * @param {String} functionName
@@ -13,7 +13,7 @@ module.exports = (name, t) => {
      * @param {Node} argument
      * @param {Node} validator
      */
-    let caller = (functionName, name, argument, validator) => {
+    return (functionName, name, argument, validator) => {
         return template({
             FUNCTION_NAME: t.stringLiteral(functionName),
             NAME: t.stringLiteral(name),
@@ -21,6 +21,4 @@ module.exports = (name, t) => {
             VALIDATOR: validator
         });
     };
-
-    return caller;
 };

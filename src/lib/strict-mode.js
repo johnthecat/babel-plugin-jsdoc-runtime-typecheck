@@ -22,9 +22,7 @@ module.exports.throwException = (path, error) => {
     let errorAnchorPath = path;
 
     if (path.node) {
-        if (path.node.loc || path.node._loc) {
-            errorAnchorPath = path;
-        } else if (path.isReturnStatement() && path.node.argument) {
+        if (path.isReturnStatement() && path.node.argument) {
             errorAnchorPath = path.get('argument');
         }
     }

@@ -3,6 +3,8 @@ const fs = require('fs');
 const path = require('path');
 const Mocha = require('mocha');
 
+const JS_REGEXP = /\.js$/;
+
 const mocha = new Mocha();
 
 addFilesFrom(mocha, path.resolve(config.path.smokeTest));
@@ -20,10 +22,10 @@ mocha.run((failures) => {
  */
 function addFilesFrom(mocha, directory) {
     fs.readdirSync(directory)
-        .filter((file) => file.substr(-3) === '.js')
-        .forEach((file) => {
+        .filter((filename) => JS_REGEXP.test(filename))
+        .forEach((filename) => {
             mocha.addFile(
-                path.join(directory, file)
+                path.join(directory, filename)
             );
         });
 }

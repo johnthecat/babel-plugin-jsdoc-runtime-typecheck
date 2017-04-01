@@ -18,7 +18,7 @@ require('core-js/fn/object/assign');
 require('core-js/fn/array/includes');
 require('core-js/fn/string/includes');
 
-const config = require('../shared/config.json');
+const {defaults, functionName} = require('../shared/config.json');
 const typecheckTemplate = require('./lib/typecheck-function-template');
 const findGlobalDirective = require('./lib/find-global-directive');
 const functionVisitorsFactory = require('./visitors');
@@ -29,8 +29,8 @@ const functionVisitorsFactory = require('./visitors');
  * @returns {{visitor: Object}}
  */
 module.exports = function ({types: t}) {
-    const typecheckFunctionDeclaration = typecheckTemplate.function(config.functionName);
-    const typecheckFunctionCall = typecheckTemplate.call(config.functionName, t);
+    const typecheckFunctionDeclaration = typecheckTemplate.function(functionName);
+    const typecheckFunctionCall = typecheckTemplate.call(functionName, t);
 
     const globalState = Object.create(null);
     const basicStateControlVisitor = {
@@ -42,7 +42,7 @@ module.exports = function ({types: t}) {
             enter(path, state) {
                 globalState.hasGlobalDirective = findGlobalDirective(path, state);
                 globalState.shouldInjectHelperFunction = false;
-                globalState.useStrict = state.opts.useStrict || config.default.useStrict;
+                globalState.useStrict = state.opts.useStrict || defaults.useStrict;
             },
 
             /**

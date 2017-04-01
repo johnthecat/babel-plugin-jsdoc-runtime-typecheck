@@ -1,89 +1,14 @@
 const config = require('../../shared/config.json');
 
-const findComment = require('../lib/find-comment');
+const {parseFunctionDeclaration} = require('../lib/parse-jsdoc');
 const canInjectIntoFunction = require('../lib/check-function');
-const parseJsDoc = require('../lib/parse-jsdoc');
 const normalizeFunctionBody = require('../lib/normalize-function-body');
 const insertParametersCheck = require('../lib/insert-parameters-check');
-const returnStatementVisitorFactory = require('./return-statement');
+const findComment = require('../lib/find-comment');
 const strictMode = require('../lib/strict-mode');
+const returnStatementVisitorFactory = require('./return-statement');
+const helpers = require('./helpers');
 
-const helpers = {
-    /**
-     * @param {Array<NodePath>} declarations
-     * @returns {NodePath|null}
-     */
-    declarationIsFunction(declarations) {
-        let functionNodeDescriptor = 'init';
-        let declaration;
-
-        for (let index = 0, count = declarations.length; index < count; index++) {
-            declaration = declarations[index].get(functionNodeDescriptor);
-
-            if (declaration.isFunction()) {
-                return declaration;
-            }
-        }
-
-        return null;
-    },
-
-    /**
-     * @param {Array<NodePath>} declarations
-     * @returns {NodePath|null}
-     */
-    declarationIsClassExpression(declarations) {
-        let classNodeDescriptor = 'init';
-        let declaration;
-
-        for (let index = 0, count = declarations.length; index < count; index++) {
-            declaration = declarations[index].get(classNodeDescriptor);
-
-            if (declaration.isClassExpression()) {
-                return declaration;
-            }
-        }
-
-        return null;
-    },
-
-    /**
-     * @param {NodePath} path
-     * @returns {Boolean}
-     */
-    pathIsConstructor(path) {
-        return path.node.kind === 'constructor';
-    },
-
-    /**
-     * @param {NodePath} path
-     * @returns {Boolean}
-     */
-    pathIsExpression(path) {
-        return path.isExpressionStatement();
-    },
-
-    /**
-     * @param {NodePath} path
-     * @returns {Boolean}
-     */
-    pathIsClassDeclaration(path) {
-        return path.isClassDeclaration();
-    },
-
-    /**
-     * @param {NodePath} classMethod
-     * @param {NodePath} classExpression
-     * @return {String}
-     */
-    createClassMethodName(classMethod, classExpression) {
-        let node = classMethod.node;
-        let className = classExpression.node.id ? classExpression.node.id.name : config.defaultClassName;
-        let kind = node.kind === 'constructor' ? '' : node.kind + ' ';
-
-        return `${node.static ? 'static ' : ''}${kind}${className}.${node.key.name}`;
-    }
-};
 
 /**
  * @param {Function} typecheckFunctionCall
@@ -103,7 +28,7 @@ module.exports = (typecheckFunctionCall, globalState, t) => {
         let jsDoc;
 
         try {
-            jsDoc = parseJsDoc(comment, globalState.useStrict);
+            jsDoc = parseFunctionDeclaration(comment, globalState.useStrict);
         } catch (error) {
             strictMode.throwSpecificException(path, 'jsDoc parser', error);
         }
@@ -113,7 +38,7 @@ module.exports = (typecheckFunctionCall, globalState, t) => {
             return;
         }
 
-        let functionName = name || jsDoc.name || (path.node.id ? path.node.id.name : config.defaultFunctionName);
+        const functionName = name || jsDoc.name || (path.node.id ? path.node.id.name : config.defaultFunctionName);
 
         normalizeFunctionBody(path);
 
@@ -139,7 +64,7 @@ module.exports = (typecheckFunctionCall, globalState, t) => {
     function executeTraverseForNestedClass(classDeclaration, state) {
         classDeclaration.traverse({
             ClassMethod(classPath) {
-                let comment = findComment(classPath, state, globalState.hasGlobalDirective);
+                const comment = findComment(classPath, state, globalState.hasGlobalDirective);
 
                 if (!comment) return;
 
@@ -157,17 +82,17 @@ module.exports = (typecheckFunctionCall, globalState, t) => {
          * @param {PluginPass} state
          */
         VariableDeclaration(path, state) {
-            let declarations = path.get('declarations');
-            let functionDeclaration = helpers.declarationIsFunction(declarations);
+            const declarations = path.get('declarations');
+            const functionDeclaration = helpers.declarationIsFunction(declarations);
 
             if (functionDeclaration) {
-                let comment = findComment(path, state, globalState.hasGlobalDirective);
+                const comment = findComment(path, state, globalState.hasGlobalDirective);
 
                 if (comment) {
                     executeFunctionTransformation(comment, functionDeclaration);
                 }
             } else {
-                let classExpressionDeclaration = helpers.declarationIsClassExpression(declarations);
+                const classExpressionDeclaration = helpers.declarationIsClassExpression(declarations);
 
                 if (classExpressionDeclaration) {
                     executeTraverseForNestedClass(classExpressionDeclaration, state);
@@ -180,11 +105,11 @@ module.exports = (typecheckFunctionCall, globalState, t) => {
          * @param {PluginPass} state
          */
         ReturnStatement(path, state) {
-            let argument = path.get('argument');
+            const argument = path.get('argument');
 
             if (!argument || !argument.isFunction()) return;
 
-            let comment = findComment(path, state, globalState.hasGlobalDirective);
+            const comment = findComment(path, state, globalState.hasGlobalDirective);
 
             if (!comment) return;
 
@@ -196,12 +121,12 @@ module.exports = (typecheckFunctionCall, globalState, t) => {
          * @param {PluginPass} state
          */
         AssignmentExpression(path, state) {
-            let rightPath = path.get('right');
+            const rightPath = path.get('right');
 
             if (!rightPath.isFunction()) return;
 
-            let expression = path.find(helpers.pathIsExpression);
-            let comment = findComment(expression, state, globalState.hasGlobalDirective);
+            const expression = path.find(helpers.pathIsExpression);
+            const comment = findComment(expression, state, globalState.hasGlobalDirective);
 
             if (!comment) return;
 
@@ -213,11 +138,11 @@ module.exports = (typecheckFunctionCall, globalState, t) => {
          * @param {PluginPass} state
          */
         ObjectProperty(path, state) {
-            let value = path.get('value');
+            const value = path.get('value');
 
             if (!value.isFunction()) return;
 
-            let comment = findComment(path, state, globalState.hasGlobalDirective);
+            const comment = findComment(path, state, globalState.hasGlobalDirective);
 
             if (!comment) return;
 
@@ -229,11 +154,11 @@ module.exports = (typecheckFunctionCall, globalState, t) => {
          * @param {PluginPass} state
          */
         ClassMethod(path, state) {
-            let comment = findComment(path, state, globalState.hasGlobalDirective);
+            const comment = findComment(path, state, globalState.hasGlobalDirective);
 
             if (!comment) return;
 
-            let classDeclaration = path.find(helpers.pathIsClassDeclaration);
+            const classDeclaration = path.find(helpers.pathIsClassDeclaration);
 
             if (!classDeclaration) return;
 
@@ -248,7 +173,7 @@ module.exports = (typecheckFunctionCall, globalState, t) => {
          * @param {PluginPass} state
          */
         ObjectMethod(path, state) {
-            let comment = findComment(path, state, globalState.hasGlobalDirective);
+            const comment = findComment(path, state, globalState.hasGlobalDirective);
 
             if (!comment) return;
 
@@ -260,7 +185,7 @@ module.exports = (typecheckFunctionCall, globalState, t) => {
          * @param {PluginPass} state
          */
         'FunctionDeclaration|ArrowFunctionExpression'(path, state) {
-            let comment = findComment(path, state, globalState.hasGlobalDirective);
+            const comment = findComment(path, state, globalState.hasGlobalDirective);
 
             if (!comment) return;
 

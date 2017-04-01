@@ -1,3 +1,7 @@
+/**
+ * @typedef {{name: String, type: Object}} Parameter
+ */
+
 const config = require('../../shared/config.json');
 const doctrine = require('doctrine');
 
@@ -100,26 +104,13 @@ function findReturnTag(tag) {
 }
 
 /**
- * @param {String} comment - comment with jsDoc
- * @param {Boolean} [useStrict]
- * @returns {{parameters: Object, returnStatement: Object, name: String}|null}
+ * @param {Array<Parameter>} paramsDescriptions
+ * @param {Boolean} useStrict
+ * @returns {Object}
  */
-module.exports = (comment, useStrict = false) => {
-    /**
-     * @type {{tags: Array<Object>, description: String}}
-     */
-    const commentAst = doctrine.parse(comment, config.doctrineConfig);
+function convertParameters(paramsDescriptions, useStrict) {
+    const parameters = {};
 
-    if (!commentAst.tags.length) {
-        return null;
-    }
-
-    const tags = commentAst.tags;
-    const nameDescription = tags.find(findNameTag);
-    const paramsDescriptions = tags.filter(findParameterTag);
-    const returnDescription = tags.find(findReturnTag);
-
-    let parameters = {};
     let parameter;
     let parameterName;
     let parameterRoot;
@@ -156,16 +147,44 @@ module.exports = (comment, useStrict = false) => {
         }
     }
 
-    const result = {
-        parameters
-    };
+    return parameters;
+}
 
-    if (returnDescription) {
-        result.returnStatement = normalizeTypes(returnDescription.type);
+/**
+ * @param {String} comment
+ * @return {{tags: Array<Object>, description: String}}
+ */
+function parseJSDoc(comment) {
+    return doctrine.parse(comment, config.doctrineConfig);
+}
+
+/**
+ * @param {String} comment - comment with jsDoc
+ * @param {Boolean} [useStrict]
+ * @returns {{parameters: Object, [returnStatement]: Object, [name]: String}|null}
+ */
+module.exports.parseFunctionDeclaration = (comment, useStrict = false) => {
+    const commentAst = parseJSDoc(comment);
+
+    if (commentAst.tags.length === 0) {
+        return null;
     }
+
+    const tags = commentAst.tags;
+    const nameDescription = tags.find(findNameTag);
+    const paramsDescriptions = tags.filter(findParameterTag);
+    const returnDescription = tags.find(findReturnTag);
+
+    const result = {
+        parameters: convertParameters(paramsDescriptions, useStrict)
+    };
 
     if (nameDescription) {
         result.name = nameDescription.name;
+    }
+
+    if (returnDescription) {
+        result.returnStatement = normalizeTypes(returnDescription.type);
     }
 
     return result;

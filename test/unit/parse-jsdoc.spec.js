@@ -1,26 +1,29 @@
 const chai = require('chai');
 const path = require('path');
-const fs = require('fs');
+const utils = require('../utils');
 const config = require('../config.json');
 
-const parseJSDoc = require('../../src/lib/parse-jsdoc');
+const {parseFunctionDeclaration} = require('../../src/lib/parse-jsdoc');
 
 const DATA_DIRECTORY = path.join(config.path.unitTestData, 'parse-jsdoc');
 const SOURCE_DIRECTORY = path.join(DATA_DIRECTORY, 'src');
 const EXPECTED_DIRECTORY = path.resolve(DATA_DIRECTORY, 'expected');
 
-const FILE_ENCODING = 'utf8';
+function createTestFor(filename) {
+    it(`in '${filename}'`, () => {
+        utils.readFile(path.join(SOURCE_DIRECTORY, filename)).then((fileSource) => {
+            const expectedJSON = require(path.join(EXPECTED_DIRECTORY, filename));
+            const parsingResult = parseFunctionDeclaration(fileSource);
+
+            chai.expect(parsingResult).to.deep.equal(expectedJSON);
+        });
+    });
+}
 
 describe('[UNIT] Parse jsDoc', () => {
     describe('correctly parse docs', () => {
-        fs.readdirSync(SOURCE_DIRECTORY).forEach((filename) => {
-            it(`in '${filename}'`, () => {
-                const fileSource = fs.readFileSync(path.join(SOURCE_DIRECTORY, filename), FILE_ENCODING);
-                const expectedJSON = require(path.join(EXPECTED_DIRECTORY, filename));
-                const parsingResult = parseJSDoc(fileSource);
-
-                chai.expect(parsingResult).to.deep.equal(expectedJSON);
-            });
+        utils.readDirectory(SOURCE_DIRECTORY).then((files) => {
+            files.forEach(createTestFor);
         });
     });
 });

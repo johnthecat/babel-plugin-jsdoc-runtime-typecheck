@@ -1,12 +1,11 @@
 require('core-js/fn/string/includes');
 
-const config = require('../../shared/config.json');
+const {defaults, doctrineConfig} = require('../../shared/config.json');
 
 const DEFAULT_COMMENT_TOP_PADDING = -1;
 const ALLOWED_COMMENT_TYPE = 'CommentBlock';
-const ALLOWED_DIRECTIVES = config.doctrineConfig.tags
-    .filter((tag) => tag !== 'name')
-    .map((tag) => `@${tag}`);
+const ALLOWED_DIRECTIVES = doctrineConfig.tags.filter(tag => tag !== 'name').map(tag => `@${tag}`);
+const ALLOWED_DIRECTIVES_COUNT = ALLOWED_DIRECTIVES.length;
 
 /**
  * @param {Object} options
@@ -18,7 +17,7 @@ function getDirective(options) {
     if ('useDirective' in options && options.useDirective !== true) {
         directive = options.useDirective;
     } else {
-        directive = config.default.useDirective;
+        directive = defaults.useDirective;
     }
 
     return directive;
@@ -75,19 +74,21 @@ module.exports = (path, state, hasGlobalDirective) => {
     const node = path.node;
     const comments = node.leadingComments;
 
+    let result = null;
+
     if (!comments) {
-        return null;
+        return result;
     }
 
     const functionDeclarationStart = getFunctionDecrarationStart(path);
     const previousNodeEnd = path.key !== 0 ?
-                            getPathEnd(path.getSibling(path.key - 1)) :
+                            getPathEnd(path.getPrevSibling()) :
                             DEFAULT_COMMENT_TOP_PADDING;
 
     const comment = findComment(comments, previousNodeEnd, functionDeclarationStart);
 
     if (!comment) {
-        return null;
+        return result;
     }
 
     const directive = getDirective(state.opts);
@@ -97,13 +98,12 @@ module.exports = (path, state, hasGlobalDirective) => {
        !hasGlobalDirective &&
        !comment.value.includes(`@${directive}`)
     ) {
-        return null;
+        return result;
     }
 
     const commentValue = comment.value;
-    let result = null;
 
-    for (let index = 0, count = ALLOWED_DIRECTIVES.length; index < count; index++) {
+    for (let index = 0; index < ALLOWED_DIRECTIVES_COUNT; index++) {
         if (commentValue.includes(ALLOWED_DIRECTIVES[index])) {
             result = commentValue;
             break;
