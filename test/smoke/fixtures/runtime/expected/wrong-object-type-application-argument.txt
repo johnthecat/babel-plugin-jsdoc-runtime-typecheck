@@ -1,1 +1,3 @@
-'TypeError: \n    Parameter "obj" in function "test" has wrong type.\n    Expected type: Object<Number>\n    Current value: "{"a":1,"b":"2"}"\n'
+Parameter "obj" in function "test" has wrong type.
+    Expected type: Object<Number>
+    Current value: "{"a":1,"b":"2"}"

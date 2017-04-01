@@ -1,2 +1,4 @@
-'TypeError: \n    Parameter "data" in function "test" has wrong type.\n    Expected type: {"a":"Number","b":"Number"}\n    Current value: "{"a":1,"c":"2"}"\n'
+Parameter "data" in function "test" has wrong type.
+    Expected type: {"a":"Number","b":"Number"}
+    Current value: "{"a":1,"c":"2"}"
 

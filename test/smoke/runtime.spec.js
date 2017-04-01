@@ -1,7 +1,7 @@
 const chai = require('chai');
 const path = require('path');
 const babel = require('babel-core');
-const Sandbox = require('sandbox');
+const {VM} = require('vm2');
 const config = require('../config.json');
 const utils = require('../utils');
 
@@ -14,17 +14,19 @@ const BABEL_CONFIG = {
     plugins: [config.path.plugin]
 };
 
-const sandbox = new Sandbox();
+const sandbox = new VM();
 
 function createPositiveTest(filename) {
     it(`in '${filename}'`, (done) => {
         utils.readFile(path.join(SOURCE_DIRECTORY_NO_ERRORS, filename)).then((fileSource) => {
             const transformedSource = babel.transform(fileSource, BABEL_CONFIG);
 
-            sandbox.run(transformedSource.code, ({result}) => {
-                chai.assert(!result.includes('TypeError'), result);
+            try {
+                sandbox.run(transformedSource.code);
                 done();
-            });
+            } catch (e) {
+                done(e);
+            }
         });
     });
 }
@@ -40,25 +42,34 @@ function createNegativeTest(filename) {
             .then(([fileSource, fileExpected]) => {
                 const transformedSource = babel.transform(fileSource, BABEL_CONFIG);
 
-                sandbox.run(transformedSource.code, (output) => {
-                    chai.expect(output.result.trim()).not.differentFrom(fileExpected.trim());
+                try {
+                    sandbox.run(transformedSource.code);
+                    done('Exception not throwed');
+                } catch (exception) {
+                    chai.expect(exception.message.trim()).not.differentFrom(fileExpected.trim());
                     done();
-                });
+                }
             });
     });
 }
 
-describe('[SMOKE] Runtime check', () => {
+Promise.all([
+    utils.readDirectory(SOURCE_DIRECTORY_NO_ERRORS),
+    utils.readDirectory(SOURCE_DIRECTORY_ERRORS)
+]).then(([positiveTestCases, negativeTestCases]) => {
 
-    describe('correctly pass validation', () => {
-        utils.readDirectory(SOURCE_DIRECTORY_NO_ERRORS).then((files) => {
-            files.forEach(createPositiveTest);
+    describe('[SMOKE] Runtime check', () => {
+
+        describe('correctly pass validation', () => {
+            positiveTestCases.forEach(createPositiveTest);
         });
+
+        describe('correctly throws error', () => {
+            negativeTestCases.forEach(createNegativeTest);
+        });
+
     });
 
-    describe('correctly throws error', () => {
-        utils.readDirectory(SOURCE_DIRECTORY_ERRORS).then((files) => {
-            files.forEach(createNegativeTest);
-        });
-    });
 });
+
+

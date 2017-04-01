@@ -1,1 +1,3 @@
-'TypeError: \n    Parameter "data" in function "testFunction" has wrong type.\n    Expected type: Test\n    Current value: "wrong data"\n'
+Parameter "data" in function "testFunction" has wrong type.
+    Expected type: Test
+    Current value: "wrong data"

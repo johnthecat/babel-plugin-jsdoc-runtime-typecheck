@@ -58,16 +58,21 @@ function createNegativeTest(filename) {
     });
 }
 
-describe('[SMOKE] Strict mode', () => {
-    describe('shouldn\'t throw exception', () => {
-        utils.readDirectory(SOURCE_DIRECTORY_NO_ERRORS).then((files) => {
-            files.forEach(createPositiveTest);
+Promise.all([
+    utils.readDirectory(SOURCE_DIRECTORY_NO_ERRORS),
+    utils.readDirectory(SOURCE_DIRECTORY_ERRORS)
+]).then(([positiveTestCases, negativeTestCases]) => {
+
+    describe('[SMOKE] Strict mode', () => {
+
+        describe('shouldn\'t throw exception', () => {
+            positiveTestCases.forEach(createPositiveTest);
         });
+
+        describe('should throw exception', () => {
+            negativeTestCases.forEach(createNegativeTest);
+        });
+
     });
 
-    describe('should throw exception', () => {
-        utils.readDirectory(SOURCE_DIRECTORY_ERRORS).then((files) => {
-            files.forEach(createNegativeTest);
-        });
-    });
 });

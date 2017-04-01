@@ -43,7 +43,7 @@
     "eslint": "^3.19.0",
     "mocha": "^3.2.0",
     "pre-commit": "^1.2.2",
-    "sandbox": "^0.8.6",
+    "vm2": "^3.4.6",
     "yargs": "^7.0.2"
   },
   "dependencies": {

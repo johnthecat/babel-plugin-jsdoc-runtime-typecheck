@@ -34,16 +34,14 @@ function createES2015IntegrationTest(filename) {
     });
 }
 
-describe('[SMOKE] Assertion inject', () => {
-    describe('correctly adds assertions', () => {
-        utils.readDirectory(SOURCE_DIRECTORY).then((files) => {
-            files.forEach(createAssertionTest);
+utils.readDirectory(SOURCE_DIRECTORY).then((sources) => {
+    describe('[SMOKE] Assertion inject', () => {
+        describe('correctly adds assertions', () => {
+            sources.forEach(createAssertionTest);
         });
-    });
 
-    describe('integration with es2015 preset', () => {
-        utils.readDirectory(SOURCE_DIRECTORY).then((files) => {
-            files.forEach(createES2015IntegrationTest);
+        describe('integration with es2015 preset', () => {
+            sources.forEach(createES2015IntegrationTest);
         });
     });
 });

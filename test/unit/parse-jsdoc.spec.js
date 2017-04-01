@@ -9,7 +9,7 @@ const DATA_DIRECTORY = path.join(config.path.unitTestData, 'parse-jsdoc');
 const SOURCE_DIRECTORY = path.join(DATA_DIRECTORY, 'src');
 const EXPECTED_DIRECTORY = path.resolve(DATA_DIRECTORY, 'expected');
 
-function createTestFor(filename) {
+function createTest(filename) {
     it(`in '${filename}'`, () => {
         utils.readFile(path.join(SOURCE_DIRECTORY, filename)).then((fileSource) => {
             const expectedJSON = require(path.join(EXPECTED_DIRECTORY, filename));
@@ -20,10 +20,14 @@ function createTestFor(filename) {
     });
 }
 
-describe('[UNIT] Parse jsDoc', () => {
-    describe('correctly parse docs', () => {
-        utils.readDirectory(SOURCE_DIRECTORY).then((files) => {
-            files.forEach(createTestFor);
+utils.readDirectory(SOURCE_DIRECTORY).then((sources) => {
+
+    describe('[UNIT] Parse jsDoc', () => {
+
+        describe('correctly parse docs', () => {
+            sources.forEach(createTest);
         });
+
     });
+
 });
